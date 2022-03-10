@@ -1,0 +1,15 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5433,
+            "driver": "PostgreSQL",
+            "name": "notsp",
+            "database": "dev_user",
+            "username": "dev_user",
+            "password": "dev_password",
+            "connectionTimeout": 10
+        }
+    ]
+}
