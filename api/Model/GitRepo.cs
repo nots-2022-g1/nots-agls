@@ -14,7 +14,7 @@ public class GitRepo
 public class GitRepoCreateDto
 {
     [Required]
-    public string naam { get; set; }
+    public string Naam { get; set; }
     [Required]
     public string Url { get; set; }
 }
