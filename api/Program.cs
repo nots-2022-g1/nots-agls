@@ -1,5 +1,6 @@
 using api.Model;
 using api.Services;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,11 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 });
 
 builder.Services.AddScoped<IGitRepoService, GitRepoService>();
+
+TypeAdapterConfig<GitLogParserGitCommit, GitCommit>
+    .NewConfig()
+    .Map(dest => dest.Date, src => src.commit_date)
+    .Map(dest => dest.Hash, src => src.commit_hash);
 
 var app = builder.Build();
 
