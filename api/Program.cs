@@ -1,4 +1,5 @@
 using api.Model;
+using api.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,8 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("default"));
 });
+
+builder.Services.AddScoped<IGitRepoService, GitRepoService>();
 
 var app = builder.Build();
 
