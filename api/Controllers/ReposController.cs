@@ -2,8 +2,16 @@ using api.Model;
 using api.Services;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace api.Controllers;
+
+public class RepoControllerAttribute : Attribute, IRouteTemplateProvider
+{
+    public string Template => "repos/{repoId:int}/[controller]";
+    public int? Order => 2;
+    public string Name { get; set; }
+}
 
 [ApiController]
 [Route("[controller]")]
