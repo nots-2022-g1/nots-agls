@@ -1,0 +1,48 @@
+﻿@page "/repos/add"
+
+<PageTitle>Add a new repository</PageTitle>
+
+@inject IRepositoryViewModel repositoryViewModel;
+@inject NavigationManager NavManager;
+
+<div class="d-flex flex-row justify-content-between align-items-center">
+    <h1>Repositories &#187; Add</h1>
+    <a href="/repos">
+        <button class="btn btn-small btn-danger">
+            Cancel
+        </button>
+    </a>
+</div>
+
+<div class="w-full border-top my-3"></div>
+
+<div class="container form-container">
+    <form>
+        <div class="mb-3">
+            <label for="repoNaam" class="form-label">Naam</label>
+            <input type="text" class="form-control" id="repoNaam" @bind="repositoryViewModel.Repository.Naam">
+        </div>
+        <div class="mb-3">
+            <label for="repoUrl" class="form-label">URL</label>
+            <input type="text" class="form-control" id="repoUrl" @bind="repositoryViewModel.Repository.Url">
+        </div>
+        <div class="d-grid">
+            <button class="btn btn-primary" type="button" @onclick="Create">
+                Add repository
+            </button>
+        </div>
+    </form>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        repositoryViewModel.PrepareRepository();
+    }
+
+    public async Task Create()
+    {
+        await repositoryViewModel.CreateRepositoryAsync();
+        NavManager.NavigateTo("/repos");
+    }
+}

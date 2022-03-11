@@ -15,17 +15,24 @@ public class RepositoryViewModel : IRepositoryViewModel
 
 	public List<Repository> Repositories { get; set; }
 
+    public Repository Repository { get; set; }
+
     public bool IsEmpty { get => Repositories.Count < 1; }
 
-    public async Task<Repository> CreateRepositoryAsync(Repository repository)
+    public void PrepareRepository()
     {
-        await _repositoryService.CreateRepositoryAsync(repository);
-        return repository;
+        Repository = new Repository();
+    }
+
+    public async Task<Repository> CreateRepositoryAsync()
+    {
+        await _repositoryService.CreateRepositoryAsync(Repository);
+        return Repository;
     }
 
     public async Task LoadRepositoriesAsync()
     {
         var result = await _repositoryService.GetRepositoriesAsync();
-        Repositories= result.ToList();
+        Repositories = result.ToList();
     }
 }

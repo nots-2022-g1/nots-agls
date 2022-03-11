@@ -10,5 +10,9 @@ public interface IRepositoryViewModel
 
     Task LoadRepositoriesAsync();
 
-    Task<Repository> CreateRepositoryAsync(Repository repository);
+    Task<Repository> CreateRepositoryAsync();
+
+    Repository Repository { get; set; }
+
+    void PrepareRepository();
 }
