@@ -1,0 +1,55 @@
+@page "/labels"
+
+<PageTitle>Labels</PageTitle>
+
+@* @inject ILabelViewModel labelViewModel; *@
+
+<div class="row mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item" aria-current="page">Labels</li>
+            <li class="breadcrumb-item active" aria-current="page">View All</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row">
+    <div class="table-responsive">
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>name</th>
+                    <th>creation date</th>
+                    <th>modified date</th>
+                    <th class="w-10">
+                        <a href="/label" class="btn btn-success btn-sm float-end mx-1" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <span class="oi oi-plus"></span>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>0</td>
+                    <td>dummy label</td>
+                    <td>00:00:01 01-01-2000</td>
+                    <td>00:00:02 01-01-2000</td>
+                    <td class="d-flex flex-row-reverse">
+                        <a href="/labels#" class="btn btn-danger btn-sm mx-1">
+                            <span class="oi oi-trash"></span>
+                        </a>
+                        <a href="/label/0" class="btn btn-warning btn-sm mx-1">
+                            <span class="oi oi-pencil"></span>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
