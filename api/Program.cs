@@ -17,6 +17,7 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 });
 
 builder.Services.AddScoped<IGitRepoService, GitRepoService>();
+builder.Services.AddScoped<ILabelService, LabelService>();
 
 var app = builder.Build();
 
