@@ -19,7 +19,8 @@ public class CommitsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get(int repoId)
     {
-        return Ok(await _gitCommitService.Get(repoId));
+        var results = await _gitCommitService.Get(repoId);
+        return Ok(results.Adapt<IList<GitCommitResponseDto>>());
     }
 
     [HttpPost]
