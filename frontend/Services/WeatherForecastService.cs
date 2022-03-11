@@ -1,4 +1,6 @@
-namespace frontend.Data;
+using frontend.Models;
+
+namespace frontend.Services;
 
 public class WeatherForecastService
 {

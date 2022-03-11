@@ -1,0 +1,43 @@
+﻿@page "/repos"
+
+<PageTitle>View all repositories</PageTitle>
+
+@inject IRepositoryViewModel repositoryViewModel;
+
+<h1>Repositories &#187; View all</h1>
+
+@if(repositoryViewModel.IsEmpty)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Naam</th>
+                <th>URL</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var repository in repositoryViewModel.Repositories)
+            {
+                <tr>
+                    <td>@repository.Naam</td>
+                    <td>
+                        <a href="@repository.Url" target="_blank" rel="noopener noreferrer">
+                            @repository.Url
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await repositoryViewModel.LoadRepositoriesAsync();
+    }
+}

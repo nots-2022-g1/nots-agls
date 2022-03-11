@@ -1,6 +1,5 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using frontend.Data;
+using frontend.Services;
+using frontend.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddHttpClient<RepositoryService>();
+builder.Services.AddScoped<IRepositoryViewModel, RepositoryViewModel>();
 
 var app = builder.Build();
 
