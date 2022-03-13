@@ -1,8 +1,8 @@
 ﻿@page "/repos"
+@inject IRepositoryViewModel _repositoryViewModel
 
 <PageTitle>View all repositories</PageTitle>
 
-@inject IRepositoryViewModel repositoryViewModel;
 
 <div class="d-flex flex-row justify-content-between align-items-center">
     <h1>Repositories &#187; View all</h1>
@@ -13,7 +13,7 @@
     </a>
 </div>
 
-@if(repositoryViewModel.IsEmpty)
+@if(_repositoryViewModel.IsEmpty)
 {
     <p><em>Loading...</em></p>
 }
@@ -27,7 +27,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var repository in repositoryViewModel.Repositories)
+            @foreach (var repository in _repositoryViewModel.Repositories)
             {
                 <tr>
                     <td>@repository.Naam</td>
@@ -43,8 +43,5 @@ else
 }
 
 @code {
-    protected override async Task OnInitializedAsync()
-    {
-        await repositoryViewModel.LoadRepositoriesAsync();
-    }
+    protected override async Task OnInitializedAsync() => await _repositoryViewModel.LoadRepositoriesAsync();
 }
