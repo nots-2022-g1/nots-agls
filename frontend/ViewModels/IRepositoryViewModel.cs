@@ -6,9 +6,13 @@ public interface IRepositoryViewModel
 {
     bool IsEmpty { get; }
 
-    List<Repository> Repositories { get; set; }
+    IList<Repository> Repositories { get; set; }
 
     Task LoadRepositoriesAsync();
 
-    Task<Repository> CreateRepositoryAsync(Repository repository);
+    Task<Repository> CreateRepositoryAsync();
+
+    Repository Repository { get; set; }
+
+    void PrepareRepository();
 }

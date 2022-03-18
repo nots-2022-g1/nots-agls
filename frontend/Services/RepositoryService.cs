@@ -1,25 +1,25 @@
 ﻿using frontend.Models;
+using Refit;
 
 namespace frontend.Services;
 
-public class RepositoryService
+public class RepositoryService : IRepositoryService
 {
-    private readonly HttpClient _httpClient;
+    private readonly IRepositoryService _client;
 
-    public RepositoryService(HttpClient httpClient)
+    public RepositoryService(IConfiguration config, HttpClient httpClient)
     {
-        _httpClient = httpClient;
+        httpClient.BaseAddress = new Uri(config.GetSection("MyAppSettings").GetValue<string>("ApiUrl"));
+        _client = RestService.For<IRepositoryService>(httpClient, new RefitSettings());
     }
 
-    public async Task<Repository[]> GetRepositoriesAsync()
+    public async Task<List<Repository>> Get()
     {
-        var result = await _httpClient.GetFromJsonAsync<Repository[]>("https://localhost:7097/repos");
-        return result;
+        return await _client.Get();
     }
 
-    public async Task CreateRepositoryAsync(Repository repository)
+    public async Task Create(Repository repository)
     {
-        var result = await _httpClient.PostAsJsonAsync("https://localhost:7097/repos", repository);
-        System.Diagnostics.Debug.WriteLine(result);
+        await _client.Create(repository);
     }
 }

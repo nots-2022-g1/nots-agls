@@ -5,27 +5,34 @@ namespace frontend.ViewModels;
 
 public class RepositoryViewModel : IRepositoryViewModel
 {
-	private readonly RepositoryService _repositoryService;
+	private readonly IRepositoryService _repositoryService;
 
-    public RepositoryViewModel(RepositoryService repositoryService)
+    public RepositoryViewModel(IRepositoryService repositoryService)
 	{
 		_repositoryService = repositoryService;
-        Repositories = new();
+        Repositories = new List<Repository>();
     }
 
-	public List<Repository> Repositories { get; set; }
+    public IList<Repository> Repositories { get; set; }
 
-    public bool IsEmpty { get => Repositories.Count < 1; }
+    public Repository Repository { get; set; }
 
-    public async Task<Repository> CreateRepositoryAsync(Repository repository)
+    public bool IsEmpty => Repositories.Count < 1;
+
+    public void PrepareRepository()
     {
-        await _repositoryService.CreateRepositoryAsync(repository);
-        return repository;
+        Repository = new Repository();
+    }
+
+    public async Task<Repository> CreateRepositoryAsync()
+    {
+        await _repositoryService.Create(Repository);
+        return Repository;
     }
 
     public async Task LoadRepositoriesAsync()
     {
-        var result = await _repositoryService.GetRepositoriesAsync();
-        Repositories= result.ToList();
+        var result = await _repositoryService.Get();
+        Repositories = result.ToList();
     }
 }
