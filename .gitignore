@@ -6,3 +6,4 @@ appsettings.Development.json
 .idea
 .vscode 
 start-dev.sh
+.vs
