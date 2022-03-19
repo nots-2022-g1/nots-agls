@@ -30,6 +30,17 @@ public class ReposController : ControllerBase
         return Ok(await _gitRepoService.Get());
     }
 
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> Get(int id)
+    {
+        var result = await _gitRepoService.Get(id);
+        if (result is null)
+        {
+            return NotFound();
+        }
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Post(GitRepoCreateDto repo)
     {
