@@ -1,4 +1,11 @@
 services:
+  rabbitmq:
+    build:
+      context: ./rabbitmq
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
   database:
     image: postgres:latest
     restart: always
