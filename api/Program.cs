@@ -21,6 +21,7 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 builder.Services.AddScoped<IGitRepoService, GitRepoService>();
 builder.Services.AddScoped<ILabelService, LabelService>();
 builder.Services.AddScoped<IGitCommitService, GitCommitService>();
+builder.Services.AddScoped<ILemmatizerService, LemmatizerService>();
 
 TypeAdapterConfig<GitLogParserGitCommit, GitCommit>
     .NewConfig()
