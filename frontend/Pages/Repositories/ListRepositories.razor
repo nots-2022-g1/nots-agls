@@ -1,0 +1,51 @@
+﻿@page "/repositories"
+
+@inject IListRepositoriesViewModel _viewModel
+
+<PageTitle>View all repositories</PageTitle>
+
+<div class="d-flex flex-row justify-content-between align-items-center">
+    <h1>Repositories &#187; View all</h1>
+    <a href="/repositories/create">
+        <button class="btn btn-small btn-success">
+            Add
+        </button>
+    </a>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Naam</th>
+            <th>URL</th>
+            <th>Acties</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var repository in _viewModel.Repositories)
+        {
+            <tr>
+                <td>@repository.Naam</td>
+                <td>
+                    <a href="@repository.Url" target="_blank" rel="noopener noreferrer">
+                        @repository.Url
+                    </a>
+                </td>
+                <td class="actions">
+                    <a href="/repos/edit/@repository.Id">
+                        <button class="btn btn-secondary">
+                            <i class="oi oi-pencil"></i>
+                        </button>
+                    </a>
+                    <button class="btn btn-danger">
+                        <i class="oi oi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    protected override async Task OnInitializedAsync() => await _viewModel.FetchRepositoriesAsync();
+}
