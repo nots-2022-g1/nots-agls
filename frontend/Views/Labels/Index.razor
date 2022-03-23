@@ -2,7 +2,9 @@
 
 <PageTitle>Labels</PageTitle>
 
-@* @inject ILabelViewModel labelViewModel; *@
+@using frontend.Models
+@using frontend.Services
+@inject LabelService LabelService
 
 <div class="row mt-3">
     <nav aria-label="breadcrumb">
@@ -49,7 +51,43 @@
                         </div>
                     </td>
                 </tr>
+                @if (labels == null)
+                {
+                    <p><em>Loading...</em></p>
+                }
+                else
+                    @foreach (var label in labels)
+                    {
+                        <tr>
+                            <td>@label.Id</td>
+                            <td>@label.Name</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>
+                                <div class="d-flex flex-row-reverse">
+
+                                    <a href='@string.Format("/labels/{0}", label.Id)' class="btn btn-danger btn-sm mx-1">
+                                        <span class="oi oi-trash"></span>
+                                    </a>
+                                    <a href='@string.Format("/labels/{0}", label.Id)' class="btn btn-warning btn-sm mx-1">
+                                        <span class="oi oi-pencil"></span>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
             </tbody>
         </table>
     </div>
 </div>
+
+@code
+{
+    private List<Label>? labels;
+
+    protected override async Task OnInitializedAsync()
+    {
+        labels = await LabelService.Get();
+        System.Diagnostics.Debug.WriteLine(labels);
+    }
+}

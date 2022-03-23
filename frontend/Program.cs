@@ -8,6 +8,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddHttpClient<IRepositoryService, RepositoryService>();
 builder.Services.AddScoped<IRepositoryViewModel, RepositoryViewModel>();
+builder.Services.AddHttpClient<ILabelService, LabelService>();
+builder.Services.AddSingleton<LabelService>();
 
 var app = builder.Build();
 
