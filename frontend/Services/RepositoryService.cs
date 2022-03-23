@@ -18,6 +18,11 @@ public class RepositoryService : IRepositoryService
         return await _client.Get();
     }
 
+    public async Task<Repository> GetById(int id)
+    {
+        return await _client.GetById(id);
+    }
+
     public async Task Create(Repository repository)
     {
         await _client.Create(repository);
@@ -32,4 +37,5 @@ public class RepositoryService : IRepositoryService
     {
         await _client.Delete(id);
     }
+
 }

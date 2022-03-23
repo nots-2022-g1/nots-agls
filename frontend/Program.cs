@@ -9,6 +9,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddHttpClient<IRepositoryService, RepositoryService>();
 builder.Services.AddScoped<IListRepositoriesViewModel, ListRepositoriesViewModel>();
 builder.Services.AddScoped<ICreateRepositoryViewModel, CreateRepositoryViewModel>();
+builder.Services.AddScoped<IViewRepositoryViewModel, ViewRepositoryViewModel>();
 
 var app = builder.Build();
 

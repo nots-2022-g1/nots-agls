@@ -1,3 +1,37 @@
-@page "/repositories/{Id:int}"
+@page "/repositories/view/{Id:int}"
 
-<h1>Hello</h1>
+<PageTitle>View repository @Id</PageTitle>
+
+@inject IViewRepositoryViewModel _viewModel;
+@inject NavigationManager _navigation;
+
+<div class="d-flex flex-row justify-content-between align-items-center">
+    <h1>Repositories &#187; View</h1>
+    <a href="/repositories">
+        <button class="btn btn-small btn-danger">
+            Cancel
+        </button>
+    </a>
+</div>
+
+<div class="w-full border-top my-3"></div>
+
+<div class="container form-container">
+    <form>
+        <div class="mb-3">
+            <label for="repoNaam" class="form-label">Naam</label>
+            <input type="text" class="form-control" id="repoNaam" @bind="_viewModel.Repository.Naam" disabled="true">
+        </div>
+        <div class="mb-3">
+            <label for="repoUrl" class="form-label">URL</label>
+            <input type="text" class="form-control" id="repoUrl" @bind="_viewModel.Repository.Url" disabled="true">
+        </div>
+    </form>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync() => await _viewModel.LoadRepositoryAsync(Id);
+}

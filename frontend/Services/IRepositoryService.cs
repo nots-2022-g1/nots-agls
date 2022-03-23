@@ -8,6 +8,9 @@ public interface IRepositoryService
     [Get("/repos")]
     Task<List<Repository>> Get();
 
+    [Get("/repos/{id}")]
+    Task<Repository> GetById(int id);
+
     [Post("/repos")]
     Task Create(Repository repository);
 
