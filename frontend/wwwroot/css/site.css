@@ -4,6 +4,14 @@
     max-width: 400px;
 }
 
+th {
+    padding: 0 5px;
+}
+
+td {
+    padding: 0 5px;
+}
+
 td.actions {
     width: 150px;
 }

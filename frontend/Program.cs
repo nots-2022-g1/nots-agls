@@ -1,4 +1,5 @@
 using frontend.Services;
+using frontend.ViewModels.Commits;
 using frontend.ViewModels.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,9 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddHttpClient<IRepositoryService, RepositoryService>();
+builder.Services.AddHttpClient<ICommitService, CommitService>();
+// -- Repositories
 builder.Services.AddScoped<IListRepositoriesViewModel, ListRepositoriesViewModel>();
 builder.Services.AddScoped<ICreateRepositoryViewModel, CreateRepositoryViewModel>();
 builder.Services.AddScoped<IViewRepositoryViewModel, ViewRepositoryViewModel>();
+// -- Commits
+builder.Services.AddScoped<IListCommitsViewModel, ListCommitsViewModel>();
 
 var app = builder.Build();
 

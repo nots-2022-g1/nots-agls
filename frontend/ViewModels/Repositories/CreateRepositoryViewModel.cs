@@ -18,8 +18,8 @@ public class CreateRepositoryViewModel : ICreateRepositoryViewModel
         _repositoryService = repositoryService;
     }
     public Repository Repository { get; set; } = new();
-    public Task CreateRepositoryAsync()
+    public async Task CreateRepositoryAsync()
     {
-        throw new NotImplementedException();
+        await _repositoryService.Create(Repository);
     }
 }

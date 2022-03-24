@@ -6,22 +6,22 @@ namespace frontend.ViewModels.Commits;
 public interface IListCommitsViewModel
 {
     public List<Commit> Commits { get; }
-    public Task FetchCommitsAsync();
+    public Task FetchCommitsForRepoAsync(int repoId);
 }
 
 public class ListCommitsViewModel : IListCommitsViewModel
 {
-    private readonly IRepositoryService _repositoryService;
+    private readonly ICommitService _commitService;
 
-    public ListCommitsViewModel(IRepositoryService repositoryService)
+    public ListCommitsViewModel(ICommitService commitService)
     {
-        _repositoryService = repositoryService;
+        _commitService = commitService;
     }
 
     public List<Commit> Commits { get; private set; } = new();
 
-    public async Task FetchCommitsAsync()
+    public async Task FetchCommitsForRepoAsync(int repoId)
     {
-        //
+        Commits = await _commitService.GetByRepoId(repoId);
     }
 }
