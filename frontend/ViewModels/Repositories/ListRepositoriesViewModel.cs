@@ -22,7 +22,6 @@ public class ListRepositoriesViewModel : IListRepositoriesViewModel
 
     public async Task FetchRepositoriesAsync()
     {
-        var repositories = await _repositoryService.Get();
-        Repositories = repositories;
+        Repositories = await _repositoryService.Get();
     }
 }
