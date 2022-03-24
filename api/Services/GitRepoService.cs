@@ -14,6 +14,10 @@ public class GitRepoService : IGitRepoService
         _gitRepositories = context.Set<GitRepo>();
     }
 
+    public async Task<GitRepo?> Get(int id)
+    {
+        return await _gitRepositories.FirstOrDefaultAsync(r => r.Id.Equals(id));
+    }
     public async Task<IList<GitRepo>> Get()
     {
         return await _gitRepositories.ToListAsync();

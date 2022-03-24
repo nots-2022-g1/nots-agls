@@ -22,4 +22,14 @@ public class RepositoryService : IRepositoryService
     {
         await _client.Create(repository);
     }
+
+    public async Task Update(int id, Repository repository)
+    {
+        await _client.Update(id, repository);
+    }
+
+    public async Task Delete(int id)
+    {
+        await _client.Delete(id);
+    }
 }
