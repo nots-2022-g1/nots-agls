@@ -7,11 +7,11 @@ namespace api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class LabelController : ControllerBase
+public class LabelsController : ControllerBase
 {
     private readonly ILabelService _labelService;
 
-    public LabelController(ILabelService labelService)
+    public LabelsController(ILabelService labelService)
     {
         _labelService = labelService;
     }

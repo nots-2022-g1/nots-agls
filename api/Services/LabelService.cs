@@ -21,14 +21,19 @@ public class LabelService : ILabelService
 
     public async Task<Label> Create(Label label)
     {
+        label.CreatedDate = DateTime.UtcNow;
+        label.UpdatedDate = DateTime.UtcNow;
+    
         var entity = _labelRepository.Add(label);
         await _context.SaveChangesAsync();
         return entity.Entity;
     }
 
-    public async Task<Label> Update(Label repo)
+    public async Task<Label> Update(Label label)
     {
-        var entity = _labelRepository.Attach(repo);
+        label.UpdatedDate = DateTime.UtcNow;
+    
+        var entity = _labelRepository.Attach(label);
         entity.State = EntityState.Modified;
         await _context.SaveChangesAsync();
         return entity.Entity;
