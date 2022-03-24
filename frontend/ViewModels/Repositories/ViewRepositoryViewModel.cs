@@ -7,6 +7,7 @@ public interface IViewRepositoryViewModel
 {
     public Repository Repository { get; set; }
     public Task LoadRepositoryAsync(int id);
+    public Task SubmitEditAsync(int id);
 }
 
 public class ViewRepositoryViewModel : IViewRepositoryViewModel
@@ -23,5 +24,10 @@ public class ViewRepositoryViewModel : IViewRepositoryViewModel
     public async Task LoadRepositoryAsync(int id)
     {
         Repository = await _repositoryService.GetById(id);
+    }
+
+    public async Task SubmitEditAsync(int id)
+    {
+        await _repositoryService.Update(id, Repository);
     }
 }

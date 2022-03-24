@@ -35,9 +35,9 @@
 </div>
 
 @code {
-    public async Task Create()
+    private async Task Create()
     {
         await _viewModel.CreateRepositoryAsync();
-        _navigation.NavigateTo("/repos");
+        _navigation.NavigateTo("/repositories");
     }
 }
