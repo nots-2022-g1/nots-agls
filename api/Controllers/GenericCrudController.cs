@@ -6,7 +6,7 @@ namespace api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public abstract class GenericCrudController<T> : ControllerBase where T : class
+public abstract class GenericCrudController<T, U> : ControllerBase where T : class
 {
     protected readonly IGenericCrudService<T> _service;
 
@@ -33,10 +33,10 @@ public abstract class GenericCrudController<T> : ControllerBase where T : class
     }
 
     [HttpPost]
-    public abstract Task<IActionResult> Post(T entity);
+    public abstract Task<IActionResult> Post(U dto);
 
     [HttpPut("{id:int}")]
-    public abstract Task<IActionResult> Put(int id, T entity);
+    public abstract Task<IActionResult> Put(int id, U dto);
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
