@@ -7,7 +7,7 @@ namespace api.Model
         public virtual DbSet<GitRepo> Repositories { get; set; }
         public virtual DbSet<GitCommit> Commits { get; set; }
         public virtual DbSet<LabeledData> LabeledData { get; set; }
-        public virtual DbSet<DataSet> DataSets { get; set; }
+        public virtual DbSet<Dataset> Datasets { get; set; }
         public virtual DbSet<Keyword> Keywords { get; set; }
 
         public ApplicationContext(DbContextOptions options) : base(options)
@@ -31,7 +31,7 @@ namespace api.Model
                     .WithMany()
                     .HasForeignKey(labeledData => labeledData.GitCommitHash)
                     .OnDelete(DeleteBehavior.NoAction);
-                e.HasOne(labeledData => labeledData.DataSet)
+                e.HasOne(labeledData => labeledData.Dataset)
                     .WithMany()
                     .HasForeignKey(labeledData => labeledData.DataSetId)
                     .OnDelete(DeleteBehavior.Cascade);
