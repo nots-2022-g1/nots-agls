@@ -6,7 +6,7 @@ namespace api.Model
     {
         public virtual DbSet<GitRepo> Repositories { get; set; }
         public virtual DbSet<GitCommit> Commits { get; set; }
-        public virtual DbSet<Label> Labels { get; set; }
+        public virtual DbSet<Keyword> Keywords { get; set; }
 
         public ApplicationContext(DbContextOptions options) : base(options)
         {

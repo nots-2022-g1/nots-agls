@@ -7,3 +7,11 @@ appsettings.Development.json
 .vscode 
 start-dev.sh
 .vs
+frontend/ca.crt
+frontend/ca.key
+frontend/ca.srl
+frontend/dev-cert.sh
+frontend/localhost.crt
+frontend/localhost.csr
+frontend/localhost.key
+frontend/localhost.pfx
