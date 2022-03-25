@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace api.Model;
 
-public class DataSet
+public class DataSet : IGenericCrudModel
 {
     [Key]
     public int Id { get; set; }
