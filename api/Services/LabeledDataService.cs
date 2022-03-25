@@ -13,7 +13,11 @@ public class LabeledDataService : ILabeledDataService
         _context = context;
         _dataRepository = context.Set<LabeledData>();
     }
-
+    
+    public async Task<LabeledData?> Get(int dataSetId, int id)
+    {
+        return await _dataRepository.FirstOrDefaultAsync(e => e.DataSetId.Equals(dataSetId) && e.Id.Equals(id));
+    }
     public async Task<IList<LabeledData>> Get(int dataSetId)
     {
         return await _dataRepository.Where(e => e.DataSetId.Equals(dataSetId)).ToListAsync();
@@ -34,7 +38,7 @@ public class LabeledDataService : ILabeledDataService
         return entity.Entity;
     }
 
-    public async Task Delete(int id)
+    public async Task Delete(int dataSetId, int id)
     {
         _dataRepository.Remove(new LabeledData { Id = id });
         await _context.SaveChangesAsync();

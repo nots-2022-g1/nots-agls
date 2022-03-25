@@ -16,6 +16,17 @@ public class LabeledDataController : ControllerBase
     {
         _labeledDataService = labeledDataService;
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> Get(int dataSetId, int id)
+    {
+        var result = await _labeledDataService.Get(dataSetId, id);
+        if (result is null)
+        {
+            return NotFound();
+        }
+        return Ok(result);
+    }
     
     [HttpGet]
     public async Task<IActionResult> Get(int dataSetId)
@@ -43,7 +54,7 @@ public class LabeledDataController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteData(int dataSetId, int id)
     {
-        await _labeledDataService.Delete(id);
+        await _labeledDataService.Delete(dataSetId, id);
         return Ok();
     }
 }
