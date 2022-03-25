@@ -1,0 +1,116 @@
+@page "/dataset/create"
+
+<PageTitle>Create Dataset</PageTitle>
+
+@using frontend.Models
+@inject DatasetService DatasetService
+@inject RepositoryService RepositoryService
+@inject KeywordService KeywordService
+@inject NavigationManager NavManager
+
+
+<div class="row mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/datasets">Datasets</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Create</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row">
+    @if (errorMessage != null)
+    {
+        <div class="alert alert-danger p-2" role="alert">
+            <span class="oi oi-warning"></span> @errorMessage
+        </div>
+    }
+
+    @if (successMessage != null)
+    {
+        <div class="alert alert-success p-2" role="alert">
+            <span class="oi oi-warning"></span> @successMessage
+        </div>
+    }
+
+    <div class="mb-3">
+        <label for="inputDatasetName" class="form-label">Name</label>
+        <input type="text" class="form-control" id="inputDatasetName" @bind="datasetDto.Name">
+    </div>
+
+
+    <div class="row mb-3">
+        <div class="col">
+            <label for="selectKeywordSet" class="form-label">Keyword set</label>
+            <select name="cars" class="btn btn-outline-secondary w-100" id="selectKeywordSet">
+                @if (keywordSets == null || keywordSets.Count < 1)
+                {
+                    <option value="" disabled selected>No keywords sets available</option>
+                }
+                else
+                {
+                    @foreach (var keywordSet in keywordSets)
+                    {
+                        <option value="@keywordSet.Id">@keywordSet.Name</option>
+                    }
+                }
+            </select> `
+        </div>
+
+        <div class="col">
+            <label for="selectRepository" class="form-label">Repository</label>
+            <select name="cars" class="btn btn-outline-secondary w-100" id="selectRepository">
+                @if (gitRepositories == null || gitRepositories.Count < 1)
+                {
+                    <option value="" disabled selected>No repositories available</option>
+                }
+                else
+                {
+                    @foreach (var gitRepository in gitRepositories)
+                    {
+                        <option value="@gitRepository.Id">@gitRepository.Naam</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-sm btn-success fw-b" @onclick="handleCreate"><span
+            class="oi oi-plus me-1"></span>
+        Create
+    </button>
+</div>
+
+@code
+{
+    private List<Repository>? gitRepositories { get; set; }
+    private List<Keyword>? keywordSets { get; set; }
+    private DatasetDto datasetDto = new();
+    private string? successMessage { get; set; }
+    private string? errorMessage { get; set; }
+
+    private async void handleCreate()
+    {
+        var response = await DatasetService.Create(datasetDto);
+
+        if (((int)response.StatusCode) == 201)
+        {
+            successMessage = $"Dataset {response?.Content?.Name} created! Redirecting to Edit view in 3s!";
+            StateHasChanged();
+            await Task.Delay(3000);
+            NavManager.NavigateTo($"/dataset/{response?.Content?.Id}");
+        }
+        else
+        {
+            errorMessage = "Error creating dataset!";
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        gitRepositories = await RepositoryService.Get();
+        keywordSets = await KeywordService.Get(); // TODO: Replace with KeywordSetService!
+    }
+}

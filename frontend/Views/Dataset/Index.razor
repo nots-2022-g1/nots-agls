@@ -3,7 +3,8 @@
 <PageTitle>Datasets</PageTitle>
 
 @using frontend.Models
-@inject KeywordService KeywordService
+@using frontend.Services
+@inject DatasetService DatasetService
 
 <div class="row mt-3">
     <nav aria-label="breadcrumb">
@@ -17,7 +18,6 @@
 
 <div class="row">
     <div class="table-responsive">
-
         <table class="table">
             <thead>
                 <tr>
@@ -26,7 +26,7 @@
                     <th>creation date</th>
                     <th>modified date</th>
                     <th class="w-10">
-                        <a href="/keywords/create" class="btn btn-success btn-sm float-end mx-1">
+                        <a href="/dataset/create" class="btn btn-success btn-sm float-end mx-1">
                             <span class="oi oi-plus"></span>
                         </a>
                     </th>
@@ -65,16 +65,15 @@
 
 @code
 {
-    // TODO: uncomment lines!
     private List<Dataset>? datasets { get; set; }
 
     private async void handleDelete(int id)
     {
-        var response = await DatasetSevice.Delete(id);
+        var response = await DatasetService.Delete(id);
 
         if (((int)response.StatusCode) == 200)
         {
-            // datasets = await DatasetService.Get();
+            datasets = await DatasetService.Get();
             StateHasChanged();
         }
     }
