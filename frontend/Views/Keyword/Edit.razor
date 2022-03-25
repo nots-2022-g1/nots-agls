@@ -1,0 +1,71 @@
+@page "/keyword/{id:int}"
+
+<PageTitle>Keywords</PageTitle>
+
+@using frontend.Models
+@inject KeywordService KeywordService
+@inject NavigationManager NavManager;
+
+
+<div class="row mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/keywords">Keywords</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row">
+    @if (error != null)
+    {
+        <div class="alert alert-danger p-2" role="alert">
+            <span class="oi oi-warning"></span> @error
+        </div>
+    }
+
+    <div class="mb-3">
+        <label for="inputLabelId" class="form-label">Id</label>
+        <input type="text" class="form-control" id="inputLabelId" @bind="id" disabled>
+    </div>
+
+    <div class="mb-3">
+        <label for="inputLabelName" class="form-label">Name</label>
+        <input type="text" class="form-control" id="inputLabelName" @bind="keywordDto.Name">
+    </div>
+
+    <button type="button" class="btn btn-sm btn-warning" @onclick="handleEdit">
+        <span class="oi oi-pencil me-1"></span> Edit
+    </button>
+
+</div>
+
+@code
+{
+    [Parameter]
+    public int id { get; set; }
+    private KeywordDto keywordDto = new();
+    private string? error { get; set; }
+
+    private async void handleEdit()
+    {
+        var response = await KeywordService.Update(id, keywordDto);
+
+        if (((int)response.StatusCode) == 200)
+        {
+            NavManager.NavigateTo("/keywords");
+        }
+        else
+        {
+            error = "Error editing keyword!";
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var keyword = await KeywordService.GetById(id);
+        keywordDto.Name = keyword.Name;
+    }
+}

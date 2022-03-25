@@ -1,0 +1,58 @@
+@page "/keywords/create"
+
+<PageTitle>Keywords</PageTitle>
+
+@using frontend.Models
+@inject KeywordService KeywordService
+@inject NavigationManager NavManager;
+
+
+<div class="row mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/keywords">Keywords</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Create</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row">
+    @if (error != null)
+    {
+        <div class="alert alert-danger p-2" role="alert">
+            <span class="oi oi-warning"></span> @error
+        </div>
+    }
+
+    <div class="mb-3">
+        <label for="inputLabelName" class="form-label">Name</label>
+        <input type="text" class="form-control" id="inputLabelName" @bind="keywordDto.Name">
+    </div>
+
+    <button type="button" class="btn btn-sm btn-success fw-b" @onclick="handleCreate"><span
+            class="oi oi-plus me-1"></span>
+        Create
+    </button>
+</div>
+
+@code
+{
+    private KeywordDto keywordDto = new();
+    private string? error { get; set; }
+
+    private async void handleCreate()
+    {
+        var response = await KeywordService.Create(keywordDto);
+
+        if (((int)response.StatusCode) == 201)
+        {
+            NavManager.NavigateTo("/keywords");
+        }
+        else
+        {
+            error = "Error creating keyword!";
+            StateHasChanged();
+        }
+    }
+}

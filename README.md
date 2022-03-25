@@ -22,3 +22,8 @@ Using .NET 6 with Blazor & ASP.NET
 > Starting the api will automatically launch swaggerUI in your browser, displaying the available endpoints and used data structures.
 
 4. Start the frontend by running `cd frontend && dotnet watch`
+
+
+# Migrations:
+
+`dotnet ef migrations add label`

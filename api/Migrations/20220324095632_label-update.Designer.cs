@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using api.Model;
@@ -11,9 +12,10 @@ using api.Model;
 namespace api.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220324095632_label-update")]
+    partial class labelupdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,23 +23,6 @@ namespace api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("api.Model.DataSet", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Naam")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DataSets");
-                });
 
             modelBuilder.Entity("api.Model.GitCommit", b =>
                 {
@@ -82,7 +67,7 @@ namespace api.Migrations
                     b.ToTable("Repositories");
                 });
 
-            modelBuilder.Entity("api.Model.Keyword", b =>
+            modelBuilder.Entity("api.Model.Label", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -102,34 +87,7 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Keywords");
-                });
-
-            modelBuilder.Entity("api.Model.LabeledData", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DataSetId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("GitCommitHash")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsUseful")
-                        .HasColumnType("boolean");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DataSetId");
-
-                    b.HasIndex("GitCommitHash");
-
-                    b.ToTable("LabeledData");
+                    b.ToTable("Labels");
                 });
 
             modelBuilder.Entity("api.Model.GitCommit", b =>
@@ -141,25 +99,6 @@ namespace api.Migrations
                         .IsRequired();
 
                     b.Navigation("GitRepo");
-                });
-
-            modelBuilder.Entity("api.Model.LabeledData", b =>
-                {
-                    b.HasOne("api.Model.DataSet", "DataSet")
-                        .WithMany()
-                        .HasForeignKey("DataSetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("api.Model.GitCommit", "GitCommit")
-                        .WithMany()
-                        .HasForeignKey("GitCommitHash")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("DataSet");
-
-                    b.Navigation("GitCommit");
                 });
 #pragma warning restore 612, 618
         }

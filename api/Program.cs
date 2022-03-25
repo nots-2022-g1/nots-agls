@@ -1,10 +1,19 @@
-using System.Globalization;
 using api.Model;
 using api.Services;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
+
+Log.Information("Starting up");
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((ctx, lc) => lc
+    .WriteTo.Console());
 
 // Add services to the container.
 
@@ -19,7 +28,7 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 });
 
 builder.Services.AddScoped<IGitRepoService, GitRepoService>();
-builder.Services.AddScoped<ILabelService, LabelService>();
+builder.Services.AddScoped<IKeywordService, KeywordService>();
 builder.Services.AddScoped<IGitCommitService, GitCommitService>();
 builder.Services.AddScoped<IGenericCrudService<DataSet>, GenericCrudService<DataSet>>();
 builder.Services.AddScoped<ILabeledDataService, LabeledDataService>();
@@ -31,6 +40,8 @@ TypeAdapterConfig<GitLogParserGitCommit, GitCommit>
     .Map(dest => dest.Hash, src => src.commit_hash);
 
 var app = builder.Build();
+
+app.UseSerilogRequestLogging();
 
 var scope = app.Services.CreateScope();
 var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();

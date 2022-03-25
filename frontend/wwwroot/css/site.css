@@ -3,3 +3,24 @@
 .form-container {
     max-width: 400px;
 }
+
+th {
+    padding: 0 5px;
+}
+
+td {
+    padding: 0 5px;
+}
+
+td.actions {
+    width: 150px;
+}
+
+td.actions button {
+    --button-size: 30px;
+    width: var(--button-size);
+    height: var(--button-size);
+    padding: 0;
+    margin: 0;
+    font-size: 0.7em;
+}
