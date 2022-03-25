@@ -34,14 +34,14 @@ public class KeywordsController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> Post(KeywordCreateDto keyword)
+    public async Task<IActionResult> Post(KeywordDto keyword)
     {
         var createdKeyword = await _keywordService.Create(keyword.Adapt<Keyword>());
         return Created($"/keywords/${createdKeyword.Id}", createdKeyword);
     }
 
     [HttpPatch("{id:int}")]
-    public async Task<IActionResult> Patch(int id, KeywordUpdateDto keyword)
+    public async Task<IActionResult> Patch(int id, KeywordDto keyword)
     {
 
         var _keyword = keyword.Adapt<Keyword>();

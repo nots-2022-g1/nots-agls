@@ -30,7 +30,7 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 builder.Services.AddScoped<IGitRepoService, GitRepoService>();
 builder.Services.AddScoped<IKeywordService, KeywordService>();
 builder.Services.AddScoped<IGitCommitService, GitCommitService>();
-builder.Services.AddScoped<IGenericCrudService<DataSet>, GenericCrudService<DataSet>>();
+builder.Services.AddScoped<IGenericCrudService<Dataset>, GenericCrudService<Dataset>>();
 builder.Services.AddScoped<ILabeledDataService, LabeledDataService>();
 
 TypeAdapterConfig<GitLogParserGitCommit, GitCommit>
