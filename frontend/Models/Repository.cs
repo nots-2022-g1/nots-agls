@@ -1,8 +1,8 @@
 ﻿namespace frontend.Models;
- 
+
 public class Repository
 {
-    public string Naam { get; set; } = default!;
-    public string Url { get; set; } = default!;
-
+    public int Id { get; set; }
+    public string Naam { get; set; }
+    public string Url { get; set; }
 }
