@@ -9,16 +9,11 @@ public class Keyword
     [Required]
     public string Name { get; set; }
 
-    public DateTime CreatedDate { get; set; }
-    public DateTime UpdatedDate { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime LastModifiedAt { get; set; }
 }
 
-public class KeywordCreateDto
-{
-    public string Name { get; set; }
-}
-
-public class KeywordUpdateDto
+public class KeywordDto
 {
     public string Name { get; set; }
 }

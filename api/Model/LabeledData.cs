@@ -10,7 +10,7 @@ public class LabeledData
     public string GitCommitHash { get; set; }
     public int DataSetId { get; set; }
     public virtual GitCommit GitCommit { get; set; }
-    public virtual DataSet DataSet { get; set; }
+    public virtual Dataset Dataset { get; set; }
 }
 
 public class LabeledDataDto

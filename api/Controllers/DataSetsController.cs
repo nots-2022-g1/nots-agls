@@ -15,11 +15,11 @@ public class DataSetControllerAttribute : Attribute, IRouteTemplateProvider
 
 [ApiController]
 [Route("[controller]")]
-public class DataSetsController : GenericCrudController<DataSet, DataSetDto>
+public class DataSetsController : GenericCrudController<Dataset, DataSetDto>
 {
     private readonly ILabeledDataService _dataService;
 
-    public DataSetsController(IGenericCrudService<DataSet> service, ILabeledDataService dataService) :
+    public DataSetsController(IGenericCrudService<Dataset> service, ILabeledDataService dataService) :
         base(service)
     {
         _dataService = dataService;
@@ -27,14 +27,14 @@ public class DataSetsController : GenericCrudController<DataSet, DataSetDto>
 
     public override async Task<IActionResult> Post(DataSetDto dto)
     {
-        var created = await _service.Create(dto.Adapt<DataSet>());
+        var created = await _service.Create(dto.Adapt<Dataset>());
         created.CreatedAt = created.LastModifiedAt = DateTime.UtcNow;
         return Created($"/datasets/{created.Id}", created);
     }
 
     public override async Task<IActionResult> Put(int id, DataSetDto dto)
     {
-        var dataSet = dto.Adapt<DataSet>();
+        var dataSet = dto.Adapt<Dataset>();
         dataSet.Id = id;
         dataSet.LastModifiedAt = DateTime.UtcNow;
         var modified = await _service.Update(dataSet);
