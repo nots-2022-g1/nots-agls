@@ -36,6 +36,14 @@ namespace api.Model
                     .HasForeignKey(labeledData => labeledData.DataSetId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
+
+            modelBuilder.Entity<Keyword>(e =>
+            {
+                e.HasOne(keyword => keyword.KeywordsSet)
+                    .WithMany()
+                    .HasForeignKey(keyword => keyword.KeywordsetId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
         }
     }
 
