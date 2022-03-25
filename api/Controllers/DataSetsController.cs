@@ -28,6 +28,7 @@ public class DataSetsController : GenericCrudController<DataSet, DataSetDto>
     public override async Task<IActionResult> Post(DataSetDto dto)
     {
         var created = await _service.Create(dto.Adapt<DataSet>());
+        created.CreatedAt = created.LastModifiedAt = DateTime.UtcNow;
         return Created($"/datasets/{created.Id}", created);
     }
 
@@ -35,6 +36,7 @@ public class DataSetsController : GenericCrudController<DataSet, DataSetDto>
     {
         var dataSet = dto.Adapt<DataSet>();
         dataSet.Id = id;
+        dataSet.LastModifiedAt = DateTime.UtcNow;
         var modified = await _service.Update(dataSet);
         return Ok(modified);
     }
