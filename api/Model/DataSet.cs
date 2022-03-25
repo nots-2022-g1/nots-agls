@@ -13,5 +13,5 @@ public class Dataset : IGenericCrudModel
 
 public class DataSetDto
 {
-    public string Naam { get; set; }
+    public string Name { get; set; }
 }

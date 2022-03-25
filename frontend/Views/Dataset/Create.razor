@@ -9,17 +9,23 @@
 @inject NavigationManager NavManager
 
 
-<div class="row mt-3">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
+<div class="row my-3">
+    <nav aria-label="breadcrumb" class="d-flex  flex-row justify-content-between align-items-center">
+        <ol class="breadcrumb m-0">
             <li class="breadcrumb-item"><a href="/">Home</a></li>
             <li class="breadcrumb-item"><a href="/datasets">Datasets</a></li>
             <li class="breadcrumb-item active" aria-current="page">Create</li>
         </ol>
+        <a href="/datasets" class="btn btn-sm btn-primary py-1">back</a>
     </nav>
 </div>
 
 <div class="row">
+    <div class="mb-3">
+        <label for="inputDatasetName" class="form-label">Name</label>
+        <input type="text" class="form-control" id="inputDatasetName" @bind="datasetDto.Name">
+    </div>
+
     @if (errorMessage != null)
     {
         <div class="alert alert-danger p-2" role="alert">
@@ -34,58 +40,14 @@
         </div>
     }
 
-    <div class="mb-3">
-        <label for="inputDatasetName" class="form-label">Name</label>
-        <input type="text" class="form-control" id="inputDatasetName" @bind="datasetDto.Name">
-    </div>
-
-
-    <div class="row mb-3">
-        <div class="col">
-            <label for="selectKeywordSet" class="form-label">Keyword set</label>
-            <select name="cars" class="btn btn-outline-secondary w-100" id="selectKeywordSet">
-                @if (keywordSets == null || keywordSets.Count < 1)
-                {
-                    <option value="" disabled selected>No keywords sets available</option>
-                }
-                else
-                {
-                    @foreach (var keywordSet in keywordSets)
-                    {
-                        <option value="@keywordSet.Id">@keywordSet.Name</option>
-                    }
-                }
-            </select> `
-        </div>
-
-        <div class="col">
-            <label for="selectRepository" class="form-label">Repository</label>
-            <select name="cars" class="btn btn-outline-secondary w-100" id="selectRepository">
-                @if (gitRepositories == null || gitRepositories.Count < 1)
-                {
-                    <option value="" disabled selected>No repositories available</option>
-                }
-                else
-                {
-                    @foreach (var gitRepository in gitRepositories)
-                    {
-                        <option value="@gitRepository.Id">@gitRepository.Naam</option>
-                    }
-                }
-            </select>
-        </div>
-    </div>
-
-    <button type="button" class="btn btn-sm btn-success fw-b" @onclick="handleCreate"><span
-            class="oi oi-plus me-1"></span>
+    <button type="button" class="btn btn-sm btn-success fw-b" disabled="@successMessage" @onclick="handleCreate">
+        <span class="oi oi-plus me-1"></span>
         Create
     </button>
 </div>
 
 @code
 {
-    private List<Repository>? gitRepositories { get; set; }
-    private List<Keyword>? keywordSets { get; set; }
     private DatasetDto datasetDto = new();
     private string? successMessage { get; set; }
     private string? errorMessage { get; set; }
@@ -96,7 +58,7 @@
 
         if (((int)response.StatusCode) == 201)
         {
-            successMessage = $"Dataset {response?.Content?.Name} created! Redirecting to Edit view in 3s!";
+            successMessage = $"Dataset '{response?.Content?.Name}' created! Redirecting to Edit view in 3s!";
             StateHasChanged();
             await Task.Delay(3000);
             NavManager.NavigateTo($"/dataset/{response?.Content?.Id}");
@@ -108,9 +70,8 @@
         }
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        gitRepositories = await RepositoryService.Get();
-        keywordSets = await KeywordService.Get(); // TODO: Replace with KeywordSetService!
+        datasetDto.Name = "untitled";
     }
 }
