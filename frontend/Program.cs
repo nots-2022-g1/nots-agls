@@ -13,6 +13,7 @@ builder.Services.AddHttpClient<ICommitService, CommitService>();
 builder.Services.AddScoped<IListRepositoriesViewModel, ListRepositoriesViewModel>();
 builder.Services.AddScoped<ICreateRepositoryViewModel, CreateRepositoryViewModel>();
 builder.Services.AddScoped<IViewRepositoryViewModel, ViewRepositoryViewModel>();
+builder.Services.AddScoped<IEditRepositoryViewModel, EditRepositoryViewModel>();
 // -- Commits
 builder.Services.AddScoped<IListCommitsViewModel, ListCommitsViewModel>();
 

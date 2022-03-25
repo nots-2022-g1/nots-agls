@@ -23,16 +23,11 @@
         <form>
             <div class="mb-3">
                 <label for="repoNaam" class="form-label">Naam</label>
-                <input type="text" class="form-control" id="repoNaam" @bind="_viewModel.Repository.Naam">
+                <input type="text" class="form-control" id="repoNaam" @bind="_viewModel.Repository.Naam" disabled="disabled">
             </div>
             <div class="mb-3">
                 <label for="repoUrl" class="form-label">URL</label>
-                <input type="text" class="form-control" id="repoUrl" @bind="_viewModel.Repository.Url">
-            </div>
-            <div class="d-grid mb-3">
-                <button class="btn btn-primary" type="button" @onclick="SubmitEdit">
-                    Bewerking toepassen
-                </button>
+                <input type="text" class="form-control" id="repoUrl" @bind="_viewModel.Repository.Url" disabled="disabled">
             </div>
         </form>
     </div>
@@ -66,11 +61,5 @@
     {
         await _viewModel.LoadRepositoryAsync(Id);
         await _commitsViewModel.FetchCommitsForRepoAsync(Id);
-    }
-
-    private async void SubmitEdit()
-    {
-        await _viewModel.SubmitEditAsync(Id);
-        _navigation.NavigateTo("/repositories");
     }
 }
