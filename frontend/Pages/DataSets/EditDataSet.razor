@@ -1,0 +1,49 @@
+﻿@page "/datasets/edit/{Id:int}"
+
+<PageTitle>Edit dataset @Id</PageTitle>
+
+@inject IEditDataSetViewModel _viewModel;
+@inject NavigationManager _navigation;
+
+<div class="d-flex flex-row justify-content-between align-items-center">
+    <h1>Datasets &#187; Edit</h1>
+    <a href="/datasets">
+        <button class="btn btn-small btn-danger">
+            Cancel
+        </button>
+    </a>
+</div>
+
+<div class="w-full border-top my-3"></div>
+
+<div class="container">
+    <div class="form-container m-auto">
+        <form>
+            <div class="mb-3">
+                <label for="naam" class="form-label">Naam</label>
+                <input type="text" class="form-control" id="naam" @bind="_viewModel.DataSet.Naam">
+            </div>
+            <div class="d-grid mb-3">
+                <button class="btn btn-primary" type="button" @onclick="SubmitEdit">
+                    Bewerking toepassen
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await _viewModel.LoadDataSetAsync(Id);
+    }
+
+    private async void SubmitEdit()
+    {
+        await _viewModel.SubmitEditAsync(Id);
+        _navigation.NavigateTo("/datasets");
+    }
+}

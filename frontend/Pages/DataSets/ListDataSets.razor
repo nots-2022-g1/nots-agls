@@ -1,0 +1,50 @@
+﻿@page "/datasets"
+
+@inject IListDataSetsViewModel _viewModel
+
+<PageTitle>View all datasets</PageTitle>
+
+<div class="d-flex flex-row justify-content-between align-items-center">
+    <h1>Datasets &#187; View all</h1>
+    <a href="/datasets/create">
+        <button class="btn btn-small btn-success">
+            Add
+        </button>
+    </a>
+</div>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Naam</th>
+        <th>Acties</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var dataset in _viewModel.DataSets)
+    {
+        <tr>
+            <td>@dataset.Naam</td>
+            <td class="actions">
+                <a href="/datasets/view/@dataset.Id">
+                    <button class="btn btn-primary">
+                        <i class="oi oi-info"></i>
+                    </button>
+                </a>
+                <a href="/datasets/edit/@dataset.Id">
+                    <button class="btn btn-secondary">
+                        <i class="oi oi-pencil"></i>
+                    </button>
+                </a>
+                <button class="btn btn-danger">
+                    <i class="oi oi-trash"></i>
+                </button>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    protected override async Task OnInitializedAsync() => await _viewModel.FetchDataSetsAsync();
+}

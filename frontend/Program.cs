@@ -1,6 +1,8 @@
 using frontend.Services;
 using frontend.ViewModels;
 using frontend.ViewModels.Commits;
+using frontend.ViewModels.DataSets;
+using frontend.ViewModels.LabeledDatas;
 using frontend.ViewModels.Repositories;
 using Serilog;
 
@@ -32,6 +34,15 @@ builder.Services.AddScoped<IEditRepositoryViewModel, EditRepositoryViewModel>();
 // -- Commits
 builder.Services.AddHttpClient<ICommitService, CommitService>();
 builder.Services.AddScoped<IListCommitsViewModel, ListCommitsViewModel>();
+// -- DataSets
+builder.Services.AddHttpClient<IDataSetService, DataSetService>();
+builder.Services.AddScoped<IListDataSetsViewModel, ListDataSetsViewModel>();
+builder.Services.AddScoped<ICreateDataSetViewModel, CreateDataSetViewModel>();
+builder.Services.AddScoped<IViewDataSetViewModel, ViewDataSetViewModel>();
+builder.Services.AddScoped<IEditDataSetViewModel, EditDataSetViewModel>();
+// -- LabeledDatas
+builder.Services.AddHttpClient<ILabeledDataService, LabeledDataService>();
+builder.Services.AddScoped<IListLabeledDataViewModel, ListLabeledDataViewModel>();
 
 var app = builder.Build();
 
