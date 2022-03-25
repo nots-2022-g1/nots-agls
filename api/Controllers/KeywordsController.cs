@@ -22,6 +22,17 @@ public class KeywordsController : ControllerBase
         return Ok(await _keywordService.Get());
     }
 
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> Get(int id)
+    {
+        var result = await _keywordService.Get(id);
+        if (result is null) return NotFound();
+
+        return Ok(result);
+    }
+
+
     [HttpPost]
     public async Task<IActionResult> Post(KeywordCreateDto keyword)
     {

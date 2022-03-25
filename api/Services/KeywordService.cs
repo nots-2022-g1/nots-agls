@@ -19,10 +19,15 @@ public class KeywordService : IKeywordService
         return await _keywordRepository.ToListAsync();
     }
 
+    public async Task<Keyword?> Get(int id)
+    {
+        return await _keywordRepository.FirstOrDefaultAsync(r => r.Id.Equals(id));
+    }
+
     public async Task<Keyword> Create(Keyword keyword)
     {
         keyword.CreatedDate = DateTime.UtcNow;
-        keyword.UpdatedDate = DateTime.UtcNow;    
+        keyword.UpdatedDate = DateTime.UtcNow;
         var entity = _keywordRepository.Add(keyword);
         await _context.SaveChangesAsync();
         return entity.Entity;
@@ -31,7 +36,7 @@ public class KeywordService : IKeywordService
     public async Task<Keyword> Update(Keyword keyword)
     {
         keyword.UpdatedDate = DateTime.UtcNow;
-    
+
         var entity = _keywordRepository.Attach(keyword);
         entity.State = EntityState.Modified;
         await _context.SaveChangesAsync();
