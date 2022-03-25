@@ -1,0 +1,95 @@
+@page "/test"
+
+@using frontend.Components
+@using frontend.Models
+@inject RepositoryService RepositoryService
+@inject KeywordService KeywordService
+
+<Modal @ref="modal">
+    <Title>
+        Generate Labeled Data
+    </Title>
+
+    <Body>
+        <div class="row">
+
+            <div class="col">
+                <label for="selectRepository" class="form-label">Repository</label>
+                <select name="cars" class="btn btn-outline-secondary w-100" id="selectRepository">
+                    @if (gitRepositories == null || gitRepositories.Count < 1)
+                    {
+                        <option value="" disabled selected>No repositories available</option>
+                    }
+                    else
+                    {
+                        @foreach (var gitRepository in gitRepositories)
+                        {
+                            <option value="@gitRepository.Id">@gitRepository.Naam</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="col">
+                <label for="selectKeywordSet" class="form-label">Keyword set</label>
+                <select name="cars" class="btn btn-outline-secondary w-100" id="selectKeywordSet">
+                    @if (keywordSets == null || keywordSets.Count < 1)
+                    {
+                        <option value="" disabled selected>No keywords sets available</option>
+                    }
+                    else
+                    {
+                        @foreach (var keywordSet in keywordSets)
+                        {
+                            <option value="@keywordSet.Id">@keywordSet.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="row my-3">
+            <div class="d-flex justify-content-between">
+                <label class="form-label">Labeled Data</label>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th><span class="test-classs">id</span></th>
+                            <th>string</th>
+                            <th>matched keyword</th>
+                            <th>usefull?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </Body>
+
+    <Footer>
+        <button type="button" class="btn btn-primary"><span class="oi oi-audio-spectrum me-1"></span> Generate</button>
+    </Footer>
+</Modal>
+
+
+
+@code {
+    private Modal modal { get; set; }
+
+    public void Open()
+    {
+        modal.Open();
+    }
+
+    private List<Repository>? gitRepositories { get; set; }
+    private List<Keyword>? keywordSets { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        gitRepositories = await RepositoryService.Get();
+        keywordSets = await KeywordService.Get(); // TODO: Replace with KeywordSetService!
+    }
+}

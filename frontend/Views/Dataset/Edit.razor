@@ -42,7 +42,11 @@ else
     <div class="mt-1 mb-3">
         <div class="d-flex justify-content-between">
             <label class="form-label">Labeled Data</label>
-            <button type="button" class="btn btn-sm btn-success"><span class="oi oi-list-rich me-1"></span>Generate labeled data</button>
+            <button @onclick="() => modal.Open()" type="button" class="btn btn-sm btn-success">
+                <span class="oi oi-list-rich me-1"></span>
+                Generate labeled data
+            </button>
+            <GeneratorModal @ref="modal"></GeneratorModal>
         </div>
         <div class="table-responsive">
             <table class="table">
@@ -86,6 +90,7 @@ else
 {
     [Parameter]
     public int id { get; set; }
+    private GeneratorModal modal { get; set; }
 
     // Form data
     private List<Repository>? gitRepositories { get; set; }
