@@ -28,8 +28,10 @@ public class KeywordService : IKeywordService
     {
         keyword.CreatedDate = DateTime.UtcNow;
         keyword.UpdatedDate = DateTime.UtcNow;
+
         var entity = _keywordRepository.Add(keyword);
         await _context.SaveChangesAsync();
+
         return entity.Entity;
     }
 
@@ -40,6 +42,7 @@ public class KeywordService : IKeywordService
         var entity = _keywordRepository.Attach(keyword);
         entity.State = EntityState.Modified;
         await _context.SaveChangesAsync();
+
         return entity.Entity;
     }
 
