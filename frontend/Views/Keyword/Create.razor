@@ -11,7 +11,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item"><a href="/keywords"></a> Keywords</li>
+            <li class="breadcrumb-item"><a href="/keywords">Keywords</a></li>
             <li class="breadcrumb-item active" aria-current="page">Create</li>
         </ol>
     </nav>
@@ -39,7 +39,7 @@
 @code
 {
     private KeywordDto keywordDto = new();
-    private string error { get; set; }
+    private string? error { get; set; }
 
     private async void handleCreate()
     {
