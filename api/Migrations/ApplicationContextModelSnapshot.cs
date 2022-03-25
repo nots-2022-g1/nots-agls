@@ -114,7 +114,7 @@ namespace api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("UseFul")
+                    b.Property<bool>("IsUseful")
                         .HasColumnType("boolean");
 
                     b.HasKey("Id");

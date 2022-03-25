@@ -28,7 +28,7 @@ namespace api.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UseFul = table.Column<bool>(type: "boolean", nullable: false),
+                    IsUseful = table.Column<bool>(type: "boolean", nullable: false),
                     GitCommitHash = table.Column<string>(type: "text", nullable: false),
                     DataSetId = table.Column<int>(type: "integer", nullable: false)
                 },

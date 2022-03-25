@@ -12,7 +12,7 @@ using api.Model;
 namespace api.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220324132645_LabeledData")]
+    [Migration("20220325090756_LabeledData")]
     partial class LabeledData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -116,7 +116,7 @@ namespace api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("UseFul")
+                    b.Property<bool>("IsUseful")
                         .HasColumnType("boolean");
 
                     b.HasKey("Id");
