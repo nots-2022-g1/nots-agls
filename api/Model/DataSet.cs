@@ -8,3 +8,8 @@ public class DataSet
     public int Id { get; set; }
     public string Naam { get; set; }
 }
+
+public class DataSetDto
+{
+    public string Naam { get; set; }
+}
