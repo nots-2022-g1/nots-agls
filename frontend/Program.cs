@@ -20,8 +20,6 @@ builder.Services.AddHttpClient<IRepositoryService, RepositoryService>();
 builder.Services.AddScoped<IRepositoryViewModel, RepositoryViewModel>();
 builder.Services.AddHttpClient<IKeywordService, KeywordService>();
 builder.Services.AddSingleton<KeywordService>();
-builder.Services.AddHttpClient<ILabelService, LabelService>();
-builder.Services.AddSingleton<LabelService>();
 
 var app = builder.Build();
 
