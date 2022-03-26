@@ -7,21 +7,68 @@
 @inject KeywordService KeywordService
 @inject NavigationManager NavManager
 
-<div class="row mt-3">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
+
+<div class="row my-3">
+    <nav aria-label="breadcrumb" class="d-flex  flex-row justify-content-between align-items-center">
+        <ol class="breadcrumb m-0">
             <li class="breadcrumb-item"><a href="/">Home</a></li>
             <li class="breadcrumb-item"><a href="/datasets">Datasets</a></li>
             <li class="breadcrumb-item active" aria-current="page">Edit</li>
         </ol>
+        <a href="/datasets" class="btn btn-sm btn-primary py-1">back</a>
     </nav>
 </div>
 
-<div class="row">
+@if (dataset == null)
+{
+    <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+</div>
+}
+else
+{
+    <div class="row">
     <div class="mb-3">
-        @if (errorMessage != null)
+        <label for="inputDatasetId" class="form-label">Id</label>
+        <input type="text" class="form-control" id="inputDatasetId" disabled @bind="dataset.Id">
+    </div>
+
+
+    <div class="mb-3">
+        <label for="inputDatasetName" class="form-label">Name</label>
+        <input type="text" class="form-control" id="inputDatasetName" @bind="dataset.Name">
+    </div>
+
+    <div class="mt-1 mb-3">
+        <div class="d-flex justify-content-between">
+            <label class="form-label">Labeled Data</label>
+            <button @onclick="() => modal.Open()" type="button" class="btn btn-sm btn-success">
+                <span class="oi oi-list-rich me-1"></span>
+                Generate labeled data
+            </button>
+            <GeneratorModal @ref="modal"></GeneratorModal>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th><span class="test-classs">id</span></th>
+                        <th>string</th>
+                        <th>matched keyword</th>
+                        <th>usefull?</th>
+                        <th><span class="float-end">actions</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @if (errorMessage != null)
         {
-            <div class="alert alert-danger p-2 mb-1" role="alert">
+            <div class="alert alert-danger p-2" role="alert">
                 <span class="oi oi-warning"></span> @errorMessage
             </div>
         }
@@ -32,85 +79,18 @@
                 <span class="oi oi-warning"></span> @successMessage
             </div>
         }
+
+        <button type="button" class="btn btn-sm btn-primary" @onclick="handleEdit">
+            <span class="oi oi-arrow-circle-bottom me-1"></span> Save
+        </button>
     </div>
-
-
-    <div class="mb-3">
-        <label for="inputDatasetId" class="form-label">Id</label>
-        <input type="text" class="form-control" id="inputDatasetId" @bind="dataset.Id" disabled>
-    </div>
-
-    <div class="mb-3">
-        <label for="inputDatasetName" class="form-label">Name</label>
-        <input type="text" class="form-control" id="inputDatasetName" @bind="dataset.Name">
-    </div>
-
-    <div class="row mb-3">
-        <div class="col">
-            <label for="selectKeywordSet" class="form-label">Keyword set</label>
-            <select name="cars" class="btn btn-outline-secondary w-100" id="selectKeywordSet">
-                @if (keywordSets == null || keywordSets.Count < 1)
-                {
-                    <option value="" disabled selected>No keywords sets available</option>
-                }
-                else
-                {
-                    @foreach (var keywordSet in keywordSets)
-                    {
-                        <option value="@keywordSet.Id">@keywordSet.Name</option>
-                    }
-                }
-            </select> `
-        </div>
-        <div class="col">
-            <label for="selectRepository" class="form-label">Repository</label>
-            <select name="cars" class="btn btn-outline-secondary w-100" id="selectRepository">
-                @if (gitRepositories == null || gitRepositories.Count < 1)
-                {
-                    <option value="" disabled selected>No repositories available</option>
-                }
-                else
-                {
-                    @foreach (var gitRepository in gitRepositories)
-                    {
-                        <option value="@gitRepository.Id">@gitRepository.Naam</option>
-                    }
-                }
-            </select>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <hr />
-    <button class="btn btn-success btn-lg fw-bold ">
-        Generate labeled data
-    </button>
-
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>id</th>
-                    <th>string</th>
-                    <th>keyword</th>
-                    <th>usefull</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
-</div>
-
+}
 
 @code
 {
     [Parameter]
     public int id { get; set; }
-
-    // Query parameters
-
+    private GeneratorModal modal { get; set; }
 
     // Form data
     private List<Repository>? gitRepositories { get; set; }
@@ -120,5 +100,28 @@
     private string? successMessage { get; set; }
     private string? errorMessage { get; set; }
 
+    private async void handleEdit()
+    {
+        var datasetDto = new DatasetDto();
+        datasetDto.Name = dataset?.Name;
+        var response = await DatasetService.Update(id, datasetDto);
 
+        if (((int)response.StatusCode) == 200)
+        {
+            successMessage = "Saved!";
+            StateHasChanged();
+        }
+        else
+        {
+            errorMessage = "Error editing keyword!";
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        gitRepositories = await RepositoryService.Get();
+        keywordSets = await KeywordService.Get(); // TODO: Replace with KeywordSetService
+        dataset = await DatasetService.GetById(id);
+    }
 }

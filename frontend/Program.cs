@@ -25,8 +25,12 @@ builder.Services.AddServerSideBlazor();
 // -- Keywords
 builder.Services.AddHttpClient<IKeywordService, KeywordService>();
 builder.Services.AddSingleton<KeywordService>();
+// -- Datasets
+builder.Services.AddHttpClient<IDatasetService, DatasetService>();
+builder.Services.AddSingleton<DatasetService>();
 // -- Repositories
 builder.Services.AddHttpClient<IRepositoryService, RepositoryService>();
+builder.Services.AddSingleton<RepositoryService>();
 builder.Services.AddScoped<IListRepositoriesViewModel, ListRepositoriesViewModel>();
 builder.Services.AddScoped<ICreateRepositoryViewModel, CreateRepositoryViewModel>();
 builder.Services.AddScoped<IViewRepositoryViewModel, ViewRepositoryViewModel>();
