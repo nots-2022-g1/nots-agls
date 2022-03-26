@@ -7,3 +7,8 @@ public class GenericCrudModel : IGenericCrudModel
     public DateTime CreatedAt { get; set; }
     public DateTime LastModifiedAt { get; set; }
 }
+
+public class GenericCrudModelDto
+{
+    public string Name { get; set; }
+}
