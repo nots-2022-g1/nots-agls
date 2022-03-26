@@ -1,9 +1,8 @@
 ﻿@page "/datasets/view/{Id:int}"
-@using frontend.ViewModels.LabeledDatas
 
 <PageTitle>View dataset @Id</PageTitle>
 
-@inject IViewDataSetViewModel _viewModel;
+@inject IViewDatasetViewModel _viewModel;
 @inject IListLabeledDataViewModel _labeledDataViewModel;
 @inject NavigationManager _navigation;
 
@@ -23,7 +22,7 @@
         <form>
             <div class="mb-3">
                 <label for="naam" class="form-label">Naam</label>
-                <input type="text" class="form-control" id="naam" @bind="_viewModel.DataSet.Naam" disabled="disabled">
+                <input type="text" class="form-control" id="naam" @bind="_viewModel.Dataset.Name" disabled="disabled">
             </div>
         </form>
     </div>
@@ -53,7 +52,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await _viewModel.LoadDataSetAsync(Id);
+        await _viewModel.LoadDatasetAsync(Id);
         await _labeledDataViewModel.GetLabelsForDataset(Id);
     }
 }

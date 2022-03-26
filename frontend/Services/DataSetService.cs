@@ -1,40 +1,41 @@
-﻿using frontend.Models;
 using Refit;
+using frontend.Models;
 
 namespace frontend.Services;
 
-public class DataSetService : IDataSetService
+public class DatasetService : IDatasetService
 {
-    private readonly IDataSetService _client;
+    private readonly IDatasetService _client;
 
-    public DataSetService(IConfiguration config, HttpClient httpClient)
+    public DatasetService(IConfiguration config, HttpClient httpClient)
     {
+
         httpClient.BaseAddress = new Uri(config.GetSection("MyAppSettings").GetValue<string>("ApiUrl"));
-        _client = RestService.For<IDataSetService>(httpClient, new RefitSettings());
+        _client = RestService.For<IDatasetService>(httpClient, new RefitSettings());
     }
-    
-    public async Task<List<DataSet>> Get()
+
+    public async Task<ApiResponse<Dataset>> Create(DatasetDto dataset)
+    {
+        return await _client.Create(dataset);
+    }
+
+    public async Task<List<Dataset>> Get()
     {
         return await _client.Get();
     }
 
-    public async Task<DataSet> GetById(int id)
+    public async Task<Dataset> GetById(int id)
     {
         return await _client.GetById(id);
     }
 
-    public async Task Create(DataSet dataSet)
+    public async Task<ApiResponse<Dataset>> Update(int id, DatasetDto dataset)
     {
-        await _client.Create(dataSet);
+        return await _client.Update(id, dataset);
     }
 
-    public async Task Update(int id, DataSet dataSet)
+    public async Task<ApiResponse<Dataset>> Delete(int id)
     {
-        await _client.Update(id, dataSet);
-    }
-
-    public async Task Delete(int id)
-    {
-        await _client.Delete(id);
+        return await _client.Delete(id);
     }
 }

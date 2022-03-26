@@ -8,7 +8,7 @@ namespace api.Controllers;
 
 public class DataSetControllerAttribute : Attribute, IRouteTemplateProvider
 {
-    public string Template => "datasets/{dataSetId:int}/[controller]";
+    public string Template => "datasets/{datasetId:int}/[controller]";
     public int? Order => 2;
     public string Name { get; set; }
 }

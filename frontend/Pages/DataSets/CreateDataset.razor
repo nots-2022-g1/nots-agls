@@ -2,7 +2,7 @@
 
 <PageTitle>Create a new dataset</PageTitle>
 
-@inject ICreateDataSetViewModel _viewModel;
+@inject ICreateDatasetViewModel _viewModel;
 @inject NavigationManager _navigation;
 
 <div class="d-flex flex-row justify-content-between align-items-center">
@@ -20,7 +20,7 @@
     <form>
         <div class="mb-3">
             <label for="datasetNaam" class="form-label">Naam</label>
-            <input type="text" class="form-control" id="datasetNaam" @bind="_viewModel.DataSet.Naam">
+            <input type="text" class="form-control" id="datasetNaam" @bind="_viewModel.Dataset.Name">
         </div>
         <div class="d-grid">
             <button class="btn btn-primary" type="button" @onclick="Create">
@@ -33,7 +33,7 @@
 @code {
     private async Task Create()
     {
-        await _viewModel.CreateDataSetAsync();
+        await _viewModel.CreateDatasetAsync();
         _navigation.NavigateTo("/datasets");
     }
 }

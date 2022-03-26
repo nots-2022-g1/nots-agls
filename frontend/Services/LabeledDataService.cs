@@ -17,24 +17,4 @@ public class LabeledDataService : ILabeledDataService
     {
         return await _client.Get(datasetId);
     }
-
-    public Task<LabeledData> GetById(int datasetId, int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task Create(LabeledData labeledData)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task Update(int datasetId, int id, LabeledData labeledData)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task Delete(int datasetId, int id)
-    {
-        throw new NotImplementedException();
-    }
 }

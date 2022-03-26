@@ -1,6 +1,6 @@
 ﻿@page "/datasets"
 
-@inject IListDataSetsViewModel _viewModel
+@inject IListDatasetsViewModel _viewModel
 
 <PageTitle>View all datasets</PageTitle>
 
@@ -15,16 +15,16 @@
 
 <table class="table">
     <thead>
-    <tr>
-        <th>Naam</th>
-        <th>Acties</th>
-    </tr>
+        <tr>
+            <th>Naam</th>
+            <th>Acties</th>
+        </tr>
     </thead>
     <tbody>
-    @foreach (var dataset in _viewModel.DataSets)
+    @foreach (var dataset in _viewModel.Datasets)
     {
         <tr>
-            <td>@dataset.Naam</td>
+            <td>@dataset.Name</td>
             <td class="actions">
                 <a href="/datasets/view/@dataset.Id">
                     <button class="btn btn-primary">
@@ -46,5 +46,5 @@
 </table>
 
 @code {
-    protected override async Task OnInitializedAsync() => await _viewModel.FetchDataSetsAsync();
+    protected override async Task OnInitializedAsync() => await _viewModel.FetchDatasetsAsync();
 }

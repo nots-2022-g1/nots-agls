@@ -1,7 +1,14 @@
-﻿namespace frontend.Models;
+namespace frontend.Models;
 
-public class DataSet
+public class Dataset
 {
     public int Id { get; set; }
-    public string Naam { get; set; }
+    public string Name { get; set; }
+    public DateTime CreatedDate { get; set; }
+    public DateTime UpdatedDate { get; set; }
+}
+
+public class DatasetDto
+{
+    public string? Name { get; set; }
 }

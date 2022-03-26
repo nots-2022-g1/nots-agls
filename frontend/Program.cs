@@ -34,12 +34,12 @@ builder.Services.AddScoped<IEditRepositoryViewModel, EditRepositoryViewModel>();
 // -- Commits
 builder.Services.AddHttpClient<ICommitService, CommitService>();
 builder.Services.AddScoped<IListCommitsViewModel, ListCommitsViewModel>();
-// -- DataSets
-builder.Services.AddHttpClient<IDataSetService, DataSetService>();
-builder.Services.AddScoped<IListDataSetsViewModel, ListDataSetsViewModel>();
-builder.Services.AddScoped<ICreateDataSetViewModel, CreateDataSetViewModel>();
-builder.Services.AddScoped<IViewDataSetViewModel, ViewDataSetViewModel>();
-builder.Services.AddScoped<IEditDataSetViewModel, EditDataSetViewModel>();
+// -- Datasets
+builder.Services.AddHttpClient<IDatasetService, DatasetService>();
+builder.Services.AddScoped<IListDatasetsViewModel, ListDatasetsViewModel>();
+builder.Services.AddScoped<ICreateDatasetViewModel, CreateDatasetViewModel>();
+builder.Services.AddScoped<IViewDatasetViewModel, ViewDatasetViewModel>();
+builder.Services.AddScoped<IEditDatasetViewModel, EditDatasetViewModel>();
 // -- LabeledDatas
 builder.Services.AddHttpClient<ILabeledDataService, LabeledDataService>();
 builder.Services.AddScoped<IListLabeledDataViewModel, ListLabeledDataViewModel>();

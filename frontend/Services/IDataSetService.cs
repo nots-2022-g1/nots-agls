@@ -1,22 +1,22 @@
-﻿using frontend.Models;
 using Refit;
+using frontend.Models;
 
 namespace frontend.Services;
 
-public interface IDataSetService
+public interface IDatasetService
 {
+    [Post("/datasets")]
+    Task<ApiResponse<Dataset>> Create(DatasetDto dto);
+
     [Get("/datasets")]
-    Task<List<DataSet>> Get();
+    Task<List<Dataset>> Get();
 
     [Get("/datasets/{id}")]
-    Task<DataSet> GetById(int id);
-    
-    [Post("/datasets")]
-    Task Create(DataSet dataSet);
+    Task<Dataset> GetById(int id);
 
     [Put("/datasets/{id}")]
-    Task Update(int id, DataSet dataSet);
+    Task<ApiResponse<Dataset>> Update(int id, DatasetDto dto);
 
     [Delete("/datasets/{id}")]
-    Task Delete(int id);
+    Task<ApiResponse<Dataset>> Delete(int id);
 }
