@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Services;
 
-public class KeywordService : IKeywordService
+public class KeywordService : IGenericCrudService<Keyword>
 {
     private readonly ApplicationContext _context;
     private readonly DbSet<Keyword> _keywordRepository;
