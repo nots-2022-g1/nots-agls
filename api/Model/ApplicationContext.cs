@@ -9,6 +9,7 @@ namespace api.Model
         public virtual DbSet<LabeledData> LabeledData { get; set; }
         public virtual DbSet<Dataset> Datasets { get; set; }
         public virtual DbSet<Keyword> Keywords { get; set; }
+        public virtual DbSet<GenericCrudModel> KeywordsSets { get; set; }
 
         public ApplicationContext(DbContextOptions options) : base(options)
         {
