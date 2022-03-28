@@ -6,7 +6,7 @@ namespace api.Services;
 public class GenericCrudService<T> : IGenericCrudService<T> where T : class, IGenericCrudModel, new()
 {
     private readonly ApplicationContext _context;
-    private readonly DbSet<T> _repo;
+    protected readonly DbSet<T> _repo;
 
     public GenericCrudService(ApplicationContext context)
     {
@@ -26,6 +26,8 @@ public class GenericCrudService<T> : IGenericCrudService<T> where T : class, IGe
 
     public async Task<T> Create(T entity)
     {
+        entity.CreatedAt = DateTime.UtcNow;
+        entity.LastModifiedAt = DateTime.UtcNow;
         var created = _repo.Add(entity);
         await _context.SaveChangesAsync();
         return created.Entity;
@@ -33,6 +35,7 @@ public class GenericCrudService<T> : IGenericCrudService<T> where T : class, IGe
 
     public async Task<T> Update(T entity)
     {
+        entity.LastModifiedAt = DateTime.UtcNow;
         var modified = _repo.Attach(entity);
         modified.State = EntityState.Modified;
         await _context.SaveChangesAsync();
