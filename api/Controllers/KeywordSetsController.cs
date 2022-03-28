@@ -5,57 +5,47 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;
 
-public class KeywordSetsController : GenericCrudController<GenericCrudModel, GenericCrudModelDto>
+[ApiController]
+[Route("[controller]")]
+public class KeywordSetsController: ControllerBase
 {
-    private readonly IGenericCrudService<Keyword> _keywordService;
-    private readonly IKeywordsSetService _keywordsSetService;
+    private readonly IGenericCrudService<KeywordSet> _keywordSetService;
 
-    public KeywordSetsController(IKeywordsSetService keywordsSetService, IGenericCrudService<Keyword> keywordService) : base(keywordsSetService)
+    public KeywordSetsController(IGenericCrudService<KeywordSet> keywordSetService)
     {
-        _keywordsSetService = keywordsSetService;
-        _keywordService = keywordService;
+        _keywordSetService = keywordSetService;
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> Get()
+    {
+        return Ok(await _keywordSetService.Get());
     }
 
-    public override async Task<IActionResult> Post(GenericCrudModelDto dto)
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> Get(int id)
     {
-        var keywordsSet = await _service.Create(dto.Adapt<GenericCrudModel>());
-        return Created($"/keywordssets/${keywordsSet.Id}", keywordsSet);
+        var result = await _keywordSetService.Get(id);
+        if (result is null)
+        {
+            return NotFound();
+        }
+        return Ok(result);
     }
-
-    public override async Task<IActionResult> Put(int id, GenericCrudModelDto dto)
+    
+    [HttpPost]
+    public async Task<IActionResult> Post(KeywordSetDto dto)
     {
-        var keywordsSet = dto.Adapt<GenericCrudModel>();
+        var keywordsSet = await _keywordSetService.Create(dto.Adapt<KeywordSet>());
+        return Created($"/keywordsets/${keywordsSet.Id}", keywordsSet);
+    }
+    
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Put(int id, KeywordSetDto dto)
+    {
+        var keywordsSet = dto.Adapt<KeywordSet>();
         keywordsSet.Id = id;
-        var modified = await _service.Update(keywordsSet);
+        var modified = await _keywordSetService.Update(keywordsSet);
         return Ok(modified);
-    }
-
-    [HttpGet("{id:int}/keywords")]
-    public async Task<IActionResult> GetKeywords(int id)
-    {
-        return Ok(await _keywordsSetService.GetKeywords(id));
-    }
-    
-    [HttpPost("{id:int}/keywords")]
-    public async Task<IActionResult> Post(int id, KeywordDto keyword)
-    {
-        keyword.KeywordsetId = id;
-        var createdKeyword = await _keywordService.Create(keyword.Adapt<Keyword>());
-        return Created($"/keywordset/{id}/{createdKeyword.Id}", createdKeyword);
-    }
-    
-    [HttpPut("{id:int}/keywords/{kwId:int}")]
-    public async Task<IActionResult> Put(int id, int kwId, KeywordDto keyword)
-    {
-        keyword.KeywordsetId = id;
-        var createdKeyword = await _keywordService.Update(keyword.Adapt<Keyword>());
-        return Created($"/keywordset/{id}/{createdKeyword.Id}", createdKeyword);
-    }
-    
-    [HttpDelete("{id:int}/keywords/{kwId:int}")]
-    public async Task<IActionResult> Delete(int id, int kwId)
-    { 
-        await _keywordService.Delete(kwId);
-        return Ok();
     }
 }

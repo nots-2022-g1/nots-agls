@@ -29,11 +29,12 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 });
 
 builder.Services.AddScoped<IGitRepoService, GitRepoService>();
-builder.Services.AddScoped<IGenericCrudService<Keyword>, KeywordService>();
 builder.Services.AddScoped<IGitCommitService, GitCommitService>();
 builder.Services.AddScoped(typeof(IGenericCrudService<>), typeof(GenericCrudService<>));
 builder.Services.AddScoped<ILabeledDataService, LabeledDataService>();
-builder.Services.AddScoped<IKeywordsSetService, KeywordsSetService>();
+builder.Services.AddScoped<IKeywordService, KeywordService>();
+
+TypeAdapterConfig.GlobalSettings.Default.NameMatchingStrategy(NameMatchingStrategy.Flexible);
 
 TypeAdapterConfig<GitLogParserGitCommit, GitCommit>
     .NewConfig()
