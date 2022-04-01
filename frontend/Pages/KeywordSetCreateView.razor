@@ -1,14 +1,42 @@
 @page "/keywordsets/create"
 
+<PageTitle>Create Keywordset</PageTitle>
+
 @inherits BaseKeywordSetCreateView
 
+<div class="row my-3">
+    <nav aria-label="breadcrumb" class="d-flex  flex-row justify-content-between align-items-center">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/keywordsets">Keywordsets</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Create</li>
+        </ol>
+        <a href="/keywordsets" class="btn btn-sm btn-primary py-1">back</a>
+    </nav>
+</div>
 
-<h1>Add KeywordSet</h1>
-<EditForm Model="@ViewModel.KeywordSetDto" OnValidSubmit="@HandleValidSubmit">
-    <DataAnnotationsValidator/>
-    <ValidationSummary/>
+<div class="row">
+    <div class="mb-3">
+        <label for="inputKeywordsetName" class="form-label">Name</label>
+        <input type="text" class="form-control" id="inputKeywordsetName" @bind="ViewModel.KeywordSetDto.Name">
+    </div>
 
-    <InputText id="name" @bind-Value="ViewModel.KeywordSetDto.Name"/>
+    @* @if (errorMessage != null)
+        {
+        <div class="alert alert-danger p-2" role="alert">
+        <span class="oi oi-warning"></span> @errorMessage
+        </div>
+        }
 
-    <button type="submit">Submit</button>
-</EditForm>
+        @if (successMessage != null)
+        {
+        <div class="alert alert-success p-2" role="alert">
+        <span class="oi oi-warning"></span> @successMessage
+        </div>
+        } *@
+
+    <button type=" button" class="btn btn-sm btn-success fw-b" @onclick="HandleValidSubmit">
+        <span class="oi oi-plus me-1"></span>
+        Create
+    </button>
+</div>

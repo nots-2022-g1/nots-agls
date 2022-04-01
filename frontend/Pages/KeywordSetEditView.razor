@@ -1,22 +1,81 @@
+@* TODO: Add Delete single keyword logic, Add Edit single keyword logic *@
+
 @page "/keywordsets/{KeywordSetId:int}/edit"
 
-<PageTitle>Edit KeywordSet</PageTitle>
+<PageTitle>View keywordset</PageTitle>
 
+@* TODO: CHange to Base EDIT view ipv DETAIL view! *@
 @inherits BaseKeywordSetEditView
 
-@if (ViewModel.KeywordSet is null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <h1>Edit @ViewModel.KeywordSet.Name</h1>
-    <EditForm Model="@ViewModel.KeywordSet" OnValidSubmit="@HandleValidSubmit">
-        <DataAnnotationsValidator/>
-        <ValidationSummary/>
+<div class="row my-3">
+    <nav aria-label="breadcrumb" class="d-flex  flex-row justify-content-between align-items-center">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/keywordsets">Keywordsets</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewModel?.KeywordSet?.Name</li>
+        </ol>
+        <a href="/keywordsets" class="btn btn-sm btn-primary py-1">back</a>
+    </nav>
+</div>
 
-        <InputText id="name" @bind-Value="ViewModel.KeywordSet.Name"/>
+<div class="row">
+    <div class="mb-3">
+        @if (ViewModel.KeywordSet == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <h1>@ViewModel.KeywordSet.Name</h1>
 
-        <button type="submit">Submit</button>
-    </EditForm>
-}
+            <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>name</th>
+                        <th>creation date</th>
+                        <th>modified date</th>
+                        <th class="text-end">
+                            actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewModel.Keywords == null)
+                        {
+                            <p><em>Loading...</em></p>
+                        }
+                        else
+                        {
+                            @foreach (var keyword in ViewModel.Keywords)
+                            {
+                                <tr>
+                                    <td>@keyword.Id</td>
+                                    <td>@keyword.Name</td>
+                                    <td>@keyword.CreatedAt.ToShortDateString()</td>
+                                    <td>@keyword.LastModifiedAt.ToShortDateString()</td>
+                                    <td>
+                                        <div class="d-flex flex-row-reverse">
+
+                                            <button class="btn btn-danger btn-sm mx-1">
+                                                <span class="oi oi-trash"></span>
+                                            </button>
+                                            <a href="#" class="btn btn-warning btn-sm mx-1">
+                                                <span class="oi oi-pencil"></span>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+    <button class="btn btn-success" @onclick="HandleAddClick">
+        Add new keyword
+    </button>
+</div>
