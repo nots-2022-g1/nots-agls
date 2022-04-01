@@ -1,7 +1,6 @@
 ﻿@page "/repositories"
 
 @inject IListRepositoriesViewModel _viewModel
-@inject IRepositoryService _repositoryService;
 
 <PageTitle>View all repositories</PageTitle>
 
@@ -43,7 +42,7 @@
                             <i class="oi oi-pencil"></i>
                         </button>
                     </a>
-                    <button class="btn btn-danger" @onclick="() => DeleteRepository(repository.Id)">
+                    <button class="btn btn-danger" @onclick="() => Delete(repository.Id)">
                         <i class="oi oi-trash"></i>
                     </button>
                 </td>
@@ -55,9 +54,9 @@
 @code {
     protected override async Task OnInitializedAsync() => await _viewModel.FetchRepositoriesAsync();
 
-    private async void DeleteRepository(int id)
+    private async void Delete(int id)
     {
-        await _repositoryService.Delete(id);
-        await _viewModel.FetchRepositoriesAsync();
-    } 
+        await _viewModel.DeleteRepositoryAsync(id);
+        StateHasChanged();
+    }
 }

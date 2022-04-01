@@ -7,6 +7,7 @@ public interface IListRepositoriesViewModel
 {
     public List<Repository> Repositories { get; }
     public Task FetchRepositoriesAsync();
+    public Task DeleteRepositoryAsync(int id);
 }
 
 public class ListRepositoriesViewModel : IListRepositoriesViewModel
@@ -22,6 +23,12 @@ public class ListRepositoriesViewModel : IListRepositoriesViewModel
 
     public async Task FetchRepositoriesAsync()
     {
+        Repositories = await _repositoryService.Get();
+    }
+
+    public async Task DeleteRepositoryAsync(int id)
+    {
+        await _repositoryService.Delete(id);
         Repositories = await _repositoryService.Get();
     }
 }
