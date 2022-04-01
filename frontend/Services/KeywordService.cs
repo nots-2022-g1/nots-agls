@@ -1,5 +1,5 @@
-using Refit;
 using frontend.Models;
+using Refit;
 
 namespace frontend.Services;
 
@@ -9,33 +9,27 @@ public class KeywordService : IKeywordService
 
     public KeywordService(IConfiguration config, HttpClient httpClient)
     {
-
         httpClient.BaseAddress = new Uri(config.GetSection("MyAppSettings").GetValue<string>("ApiUrl"));
-        this._client = RestService.For<IKeywordService>(httpClient, new RefitSettings());
+        _client = RestService.For<IKeywordService>(httpClient, new RefitSettings());
+    }
+    
+    public Task<List<KeywordSet>> Get()
+    {
+        return _client.Get();
     }
 
-    public async Task<ApiResponse<Keyword>> Create(KeywordDto keyword)
+    public Task<KeywordSet> GetById(int id)
     {
-        return await this._client.Create(keyword);
+        return _client.GetById(id);
     }
 
-    public async Task<List<Keyword>> Get()
+    public Task<List<Keyword>> GetKeywords(int id)
     {
-        return await this._client.Get();
+        return _client.GetKeywords(id);
     }
 
-    public async Task<Keyword> GetById(int id)
+    public Task<Keyword> AddKeyword(int id, KeywordDto dto)
     {
-        return await this._client.GetById(id);
-    }
-
-    public async Task<ApiResponse<Keyword>> Update(int id, KeywordDto keyword)
-    {
-        return await this._client.Update(id, keyword);
-    }
-
-    public async Task<ApiResponse<Keyword>> Delete(int id)
-    {
-        return await this._client.Delete(id);
+        return _client.AddKeyword(id, dto);
     }
 }

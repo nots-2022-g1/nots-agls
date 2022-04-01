@@ -1,22 +1,19 @@
-using Refit;
 using frontend.Models;
+using Refit;
 
 namespace frontend.Services;
 
 public interface IKeywordService
 {
-    [Post("/keywords")]
-    Task<ApiResponse<Keyword>> Create(KeywordDto label);
-
-    [Get("/keywords")]
-    Task<List<Keyword>> Get();
-
-    [Get("/keywords/{id}")]
-    Task<Keyword> GetById(int id);
-
-    [Patch("/keywords/{id}")]
-    Task<ApiResponse<Keyword>> Update(int id, KeywordDto label);
-
-    [Delete("/keywords/{id}")]
-    Task<ApiResponse<Keyword>> Delete(int id);
+    [Get("/keywordsets")]
+    Task<List<KeywordSet>> Get();
+    
+    [Get("/keywordsets/{id}")]
+    Task<KeywordSet> GetById(int id);
+    
+    [Get("/keywordsets/{id}/keywords")]
+    Task<List<Keyword>> GetKeywords(int id);
+    
+    [Post("/keywordsets/{id}/keywords")]
+    Task<Keyword> AddKeyword(int id, KeywordDto dto);
 }
