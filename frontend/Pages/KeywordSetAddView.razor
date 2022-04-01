@@ -1,0 +1,21 @@
+@page "/keywordsets/{KeywordSetId:int}/add"
+
+@inherits BaseKeywordAddView
+
+@if (ViewModel.KeywordSet == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h1>@ViewModel.KeywordSet.Name</h1>
+    <p>Add keyword</p>
+    <EditForm Model="@ViewModel.Dto" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <InputText id="name" @bind-Value="ViewModel.Dto.Name" />
+
+        <button type="submit">Submit</button>
+    </EditForm>
+}
