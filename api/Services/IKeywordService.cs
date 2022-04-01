@@ -2,11 +2,7 @@ using api.Model;
 
 namespace api.Services;
 
-public interface IKeywordService
+public interface IKeywordService : IGenericCrudService<Keyword>
 {
-    Task<IList<Keyword>> Get();
-    Task<Keyword?> Get(int id);
-    Task<Keyword> Create(Keyword label);
-    Task<Keyword> Update(Keyword label);
-    Task Delete(int id);
+    public Task<IList<Keyword>> GetByKeywordSetId(int keywordSetId);
 }

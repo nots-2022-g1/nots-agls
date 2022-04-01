@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
-public class KeywordsController : ControllerBase
+[Route("KeywordSets/{keywordSetId:int}/[controller]")]
+public class KeywordsController: ControllerBase
 {
     private readonly IKeywordService _keywordService;
 
@@ -17,43 +17,31 @@ public class KeywordsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> GetKeywords(int keywordSetId)
     {
-        return Ok(await _keywordService.Get());
+        var response = await _keywordService.GetByKeywordSetId(keywordSetId);
+        return Ok(response.Adapt<IList<KeywordResponseDto>>());
     }
-
-
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> Get(int id)
-    {
-        var result = await _keywordService.Get(id);
-        if (result is null) return NotFound();
-
-        return Ok(result);
-    }
-
-
+    
     [HttpPost]
-    public async Task<IActionResult> Post(KeywordDto keyword)
+    public async Task<IActionResult> Post(int keywordSetId, KeywordDto keyword)
     {
+        keyword.KeywordSetId = keywordSetId;
         var createdKeyword = await _keywordService.Create(keyword.Adapt<Keyword>());
-        return Created($"/keywords/${createdKeyword.Id}", createdKeyword);
+        return Created($"/keywordset/{keywordSetId}/{createdKeyword.Id}", createdKeyword);
     }
-
-    [HttpPatch("{id:int}")]
-    public async Task<IActionResult> Patch(int id, KeywordDto keyword)
+    
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Put(int keywordSetId, int id, KeywordDto keyword)
     {
-
-        var _keyword = keyword.Adapt<Keyword>();
-        _keyword.Id = id;
-
-        var modifiedKeyword = await _keywordService.Update(_keyword);
-        return Ok(modifiedKeyword);
+        keyword.KeywordSetId = id;
+        var createdKeyword = await _keywordService.Update(keyword.Adapt<Keyword>());
+        return Created($"/keywordset/{id}/{createdKeyword.Id}", createdKeyword);
     }
-
+    
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id)
-    {
+    public async Task<IActionResult> Delete(int keywordSetId, int id)
+    { 
         await _keywordService.Delete(id);
         return Ok();
     }

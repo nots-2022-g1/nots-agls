@@ -2,6 +2,7 @@ using api.Model;
 using api.Services;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -28,10 +29,12 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 });
 
 builder.Services.AddScoped<IGitRepoService, GitRepoService>();
-builder.Services.AddScoped<IKeywordService, KeywordService>();
 builder.Services.AddScoped<IGitCommitService, GitCommitService>();
-builder.Services.AddScoped<IGenericCrudService<Dataset>, GenericCrudService<Dataset>>();
+builder.Services.AddScoped(typeof(IGenericCrudService<>), typeof(GenericCrudService<>));
 builder.Services.AddScoped<ILabeledDataService, LabeledDataService>();
+builder.Services.AddScoped<IKeywordService, KeywordService>();
+
+TypeAdapterConfig.GlobalSettings.Default.NameMatchingStrategy(NameMatchingStrategy.Flexible);
 
 TypeAdapterConfig<GitLogParserGitCommit, GitCommit>
     .NewConfig()
