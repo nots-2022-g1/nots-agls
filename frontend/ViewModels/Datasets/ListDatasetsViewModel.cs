@@ -7,6 +7,7 @@ public interface IListDatasetsViewModel
 {
     public List<Dataset> Datasets { get; }
     public Task FetchDatasetsAsync();
+    public Task DeleteDatasetAsync(int id);
 }
 
 public class ListDatasetsViewModel : IListDatasetsViewModel
@@ -22,6 +23,12 @@ public class ListDatasetsViewModel : IListDatasetsViewModel
     
     public async Task FetchDatasetsAsync()
     {
+        Datasets = await _datasetService.Get();
+    }
+
+    public async Task DeleteDatasetAsync(int id)
+    {
+        await _datasetService.Delete(id);
         Datasets = await _datasetService.Get();
     }
 }

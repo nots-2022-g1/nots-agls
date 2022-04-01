@@ -1,6 +1,6 @@
 ﻿@page "/datasets"
 
-@inject IListDatasetsViewModel _viewModel
+@inject IListDatasetsViewModel _viewModel;
 
 <PageTitle>View all datasets</PageTitle>
 
@@ -36,7 +36,7 @@
                         <i class="oi oi-pencil"></i>
                     </button>
                 </a>
-                <button class="btn btn-danger">
+                <button class="btn btn-danger" @onclick="() => DeleteDataset(dataset.Id)">
                     <i class="oi oi-trash"></i>
                 </button>
             </td>
@@ -47,4 +47,11 @@
 
 @code {
     protected override async Task OnInitializedAsync() => await _viewModel.FetchDatasetsAsync();
+
+    private async void DeleteDataset(int id)
+    {
+        await _viewModel.DeleteDatasetAsync(id);
+        StateHasChanged();
+    }
+
 }
