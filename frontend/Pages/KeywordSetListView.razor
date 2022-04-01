@@ -2,37 +2,62 @@
 
 @inherits BaseKeywordSetListView
 
-<h1>Keywords</h1>
-<p>This component demonstrates fetching data from the server.</p>
+<div class="row my-3">
+    <nav aria-label="breadcrumb" class="d-flex  flex-row justify-content-between align-items-center">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item" aria-current="page">Keywordsets</li>
+            <li class="breadcrumb-item active" aria-current="page">View All</li>
+        </ol>
+        <a href="/keywordsets/create" class="btn btn-sm btn-success py-1">new keywordset</a>
+    </nav>
+</div>
 
-@if (ViewModel.KeywordSets == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Created At</th>
-            <th>Last Modified At</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var keywordSet in ViewModel.KeywordSets)
-        {
-            <tr>
-                <td>@keywordSet.Id</td>
-                <td><a href="keywordsets/@keywordSet.Id">@keywordSet.Name</a></td>
-                <td>@keywordSet.CreatedAt.ToShortDateString()</td>
-                <td>@keywordSet.LastModifiedAt.ToShortDateString()</td>
-            </tr>
-        }
-        </tbody>
-    </table>
-}
-<button @onclick="HandleAddClick">
-    Add
-</button>
+<div class="row">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>name</th>
+                    <th>creation date</th>
+                    <th>modified date</th>
+                    <th class="text-end">
+                        actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewModel.KeywordSets == null)
+                {
+                    <p><em>Loading...</em></p>
+                }
+                else
+                {
+                    @foreach (var keywordSet in ViewModel.KeywordSets)
+                    {
+                        <tr>
+                            <td>@keywordSet.Id</td>
+                            <td>@keywordSet.Name</td>
+                            <td>@keywordSet.CreatedAt.ToShortDateString()</td>
+                            <td>@keywordSet.LastModifiedAt.ToShortDateString()</td>
+                            <td>
+                                <div class="d-flex flex-row-reverse">
+                                    <button class="btn btn-danger btn-sm mx-1">
+                                        <span class="oi oi-trash"></span>
+                                    </button>
+                                    <a href="/dataset/@keywordSet.Id" class="btn btn-warning btn-sm mx-1">
+                                        <span class="oi oi-pencil"></span>
+                                    </a>
+                                    <a href="/keywordsets/@keywordSet.Id" class="btn btn-primary btn-sm mx-1">
+                                        <span class="oi oi-eye"></span>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

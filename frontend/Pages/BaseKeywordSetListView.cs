@@ -15,6 +15,6 @@ public class BaseKeywordSetListView : ComponentBase
 
     protected void HandleAddClick()
     {
-        NavManager.NavigateTo($"keywordsets/add");
+        NavManager.NavigateTo($"keywordsets/create");
     }
 }
