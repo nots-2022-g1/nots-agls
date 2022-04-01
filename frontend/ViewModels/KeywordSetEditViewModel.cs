@@ -1,34 +1,40 @@
 using frontend.Models;
 using frontend.Services;
+using Mapster;
 
 namespace frontend.ViewModels;
 
-public interface IKeywordSetDetailViewModel
+public interface IKeywordSetEditViewModel
 {
-    List<Keyword> Keywords { get; set; }
     KeywordSet KeywordSet { get; set; }
+    List<Keyword> Keywords { get; set; }
     Task RetrieveKeywordSetAsync(int id);
     Task RetrieveKeywordsAsync();
+    Task UpdateKeywordSetAsync();
 }
 
-public class KeywordSetDetailViewModel : IKeywordSetDetailViewModel
+public class KeywordSetEditViewModel : IKeywordSetEditViewModel
 {
     private readonly IKeywordService _keywordService;
     public KeywordSet KeywordSet { get; set; }
     public List<Keyword> Keywords { get; set; }
 
-    public KeywordSetDetailViewModel(IKeywordService keywordService)
+    public KeywordSetEditViewModel(IKeywordService keywordService)
     {
         _keywordService = keywordService;
     }
-
     public async Task RetrieveKeywordSetAsync(int id)
     {
         KeywordSet = await _keywordService.GetById(id);
     }
-
+    
     public async Task RetrieveKeywordsAsync()
     {
         Keywords = await _keywordService.GetKeywords(KeywordSet.Id);
+    }
+
+    public async Task UpdateKeywordSetAsync()
+    {
+        KeywordSet = await _keywordService.UpdateKeywordSet(KeywordSet.Id, KeywordSet.Adapt<KeywordSetDto>());
     }
 }

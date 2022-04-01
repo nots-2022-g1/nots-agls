@@ -13,12 +13,6 @@ public class BaseKeywordSetListView : ComponentBase
     {
         await ViewModel.RetrieveKeywordSetsAsync();
     }
-
-    protected void HandleAddClick()
-    {
-        NavManager.NavigateTo($"keywordsets/create");
-    }
-    
     protected async void HandleRemoveClick(int id)
     {
         await ViewModel.RemoveKeywordSetAsync(id);

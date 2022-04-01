@@ -1,11 +1,11 @@
 @* TODO: Add Delete single keyword logic, Add Edit single keyword logic *@
 
-@page "/keywordsets/edit/{KeywordSetId:int}"
+@page "/keywordsets/{KeywordSetId:int}/edit"
 
 <PageTitle>View keywordset</PageTitle>
 
 @* TODO: CHange to Base EDIT view ipv DETAIL view! *@
-@inherits BaseKeywordSetDetailView
+@inherits BaseKeywordSetEditView
 
 <div class="row my-3">
     <nav aria-label="breadcrumb" class="d-flex  flex-row justify-content-between align-items-center">
@@ -75,7 +75,7 @@
             </div>
         }
     </div>
-    <button class="btn btn-success" @onclick="HandleAddClick">
+    <a class="btn btn-success" href="/keywordsets/@KeywordSetId/add">
         Add new keyword
-    </button>
+    </a>
 </div>
