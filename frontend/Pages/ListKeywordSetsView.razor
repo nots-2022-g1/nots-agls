@@ -1,0 +1,35 @@
+@page "/keywordsets"
+
+@inherits BaseKeywordSetsView
+
+<h1>Keywords</h1>
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (ListKeywordSetsViewModel.KeywordSets == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Created At</th>
+            <th>Last Modified At</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var keywordSet in ListKeywordSetsViewModel.KeywordSets)
+        {
+            <tr>
+                <td>@keywordSet.Id</td>
+                <td><a href="keywordsets/@keywordSet.Id">@keywordSet.Name</a></td>
+                <td>@keywordSet.CreatedAt.ToShortDateString()</td>
+                <td>@keywordSet.LastModifiedAt.ToShortDateString()</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
