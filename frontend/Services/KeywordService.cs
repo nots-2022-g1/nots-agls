@@ -32,4 +32,9 @@ public class KeywordService : IKeywordService
     {
         return _client.AddKeyword(id, dto);
     }
+
+    public Task<KeywordSet> AddKeywordSet(KeywordSetDto dto)
+    {
+        return _client.AddKeywordSet(dto);
+    }
 }

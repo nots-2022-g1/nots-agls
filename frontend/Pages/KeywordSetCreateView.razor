@@ -1,0 +1,14 @@
+@page "/keywordsets/add"
+
+@inherits BaseKeywordSetCreateView
+
+
+<h1>Add KeywordSet</h1>
+<EditForm Model="@ViewModel.KeywordSetDto" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
+    <InputText id="name" @bind-Value="ViewModel.KeywordSetDto.Name"/>
+
+    <button type="submit">Submit</button>
+</EditForm>

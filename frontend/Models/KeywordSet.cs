@@ -7,3 +7,8 @@ public class KeywordSet
     public DateTime CreatedAt { get; set; }
     public DateTime LastModifiedAt { get; set; }
 }
+
+public class KeywordSetDto
+{
+    public string Name { get; set; }
+}

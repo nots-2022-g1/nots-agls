@@ -4,22 +4,21 @@ using Microsoft.AspNetCore.Components;
 
 namespace frontend.Pages;
 
-public class BaseKeywordAddView : ComponentBase
+public class BaseKeywordSetCreateView : ComponentBase
 {
-    [Inject] protected IKeywordSetAddViewModel ViewModel { get; set; } = default!;
+    [Inject] protected IKeywordSetCreateViewModel ViewModel { get; set; } = default!;
     [Inject] protected NavigationManager NavManager { get; set; } = default!;
     [Parameter] public int KeywordSetId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        await ViewModel.RetrieveKeywordSetAsync(KeywordSetId);
-        ViewModel.Dto = new KeywordDto {KeywordSetId = ViewModel.KeywordSet.Id};
+        ViewModel.KeywordSetDto = new KeywordSetDto();
     }
 
     protected void HandleValidSubmit()
     {
         Console.WriteLine("HandleValidSubmit called");
-        ViewModel.AddKeywordAsync();
-        NavManager.NavigateTo($"keywordsets/{KeywordSetId}");
+        ViewModel.AddKeywordSetAsync();
+        NavManager.NavigateTo($"keywordsets");
     }
 }

@@ -21,9 +21,10 @@ builder.Services.AddServerSideBlazor();
 
 // -- Datasets
 builder.Services.AddHttpClient<IKeywordService, KeywordService>();
-builder.Services.AddTransient<IListKeywordSetsViewModel, ListKeywordSetsViewModel>();
+builder.Services.AddTransient<IKeywordSetListViewModel, KeywordSetListViewModel>();
 builder.Services.AddTransient<IKeywordSetDetailViewModel, KeywordSetDetailViewModel>();
 builder.Services.AddTransient<IKeywordSetAddViewModel, KeywordSetAddViewModel>();
+builder.Services.AddTransient<IKeywordSetCreateViewModel, KeywordSetCreateViewModel>();
 
 builder.Services.AddHttpClient<IDatasetService, DatasetService>();
 builder.Services.AddSingleton<DatasetService>();

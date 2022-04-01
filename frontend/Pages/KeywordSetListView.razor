@@ -1,11 +1,11 @@
 @page "/keywordsets"
 
-@inherits BaseKeywordSetsView
+@inherits BaseKeywordSetListView
 
 <h1>Keywords</h1>
 <p>This component demonstrates fetching data from the server.</p>
 
-@if (ListKeywordSetsViewModel.KeywordSets == null)
+@if (ViewModel.KeywordSets == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -21,7 +21,7 @@ else
         </tr>
         </thead>
         <tbody>
-        @foreach (var keywordSet in ListKeywordSetsViewModel.KeywordSets)
+        @foreach (var keywordSet in ViewModel.KeywordSets)
         {
             <tr>
                 <td>@keywordSet.Id</td>
@@ -33,3 +33,6 @@ else
         </tbody>
     </table>
 }
+<button @onclick="HandleAddClick">
+    Add
+</button>

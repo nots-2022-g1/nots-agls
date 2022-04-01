@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Components;
 
 namespace frontend.Pages;
 
-public class BaseKeywordSetView : ComponentBase
+public class BaseKeywordSetDetailView : ComponentBase
 {
-    [Inject] protected IKeywordSetDetailViewModel KeywordSetDetailViewModel { get; set; } = default!;
+    [Inject] protected IKeywordSetDetailViewModel ViewModel { get; set; } = default!;
 
     [Inject] protected NavigationManager NavManager { get; set; } = default!;
 
@@ -13,8 +13,8 @@ public class BaseKeywordSetView : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await KeywordSetDetailViewModel.RetrieveKeywordSetAsync(KeywordSetId);
-        await KeywordSetDetailViewModel.RetrieveKeywordsAsync();
+        await ViewModel.RetrieveKeywordSetAsync(KeywordSetId);
+        await ViewModel.RetrieveKeywordsAsync();
     }
 
     protected void HandleAddClick()

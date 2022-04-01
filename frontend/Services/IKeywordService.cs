@@ -16,4 +16,7 @@ public interface IKeywordService
     
     [Post("/keywordsets/{id}/keywords")]
     Task<Keyword> AddKeyword(int id, KeywordDto dto);
+    
+    [Post("/keywordsets")]
+    Task<KeywordSet> AddKeywordSet(KeywordSetDto dto);
 }
