@@ -27,9 +27,26 @@
         }
         else
         {
-            <h1>@ViewModel.KeywordSet.Name</h1>
+            <div class="mb-3">
+                <label for="inputKeywordsetId" class="form-label">Id</label>
+                <input type="text" class="form-control" id="inputKeywordsetId" disabled @bind="ViewModel.KeywordSet.Id">
+            </div>
 
-            <div class="table-responsive">
+
+            <div class="mb-3">
+                <label for="inputKeywordsetName" class="form-label">Name</label>
+                <input type="text" class="form-control" id="inputKeywordsetName" @bind="ViewModel.KeywordSet.Name">
+            </div>
+
+            <div class="mb-3">
+                <button type="button" class="btn btn-sm btn-primary w-100" @onclick="ViewModel.UpdateKeywordSetAsync">
+                    <span class="oi oi-arrow-circle-bottom me-1"></span> Save
+                </button>
+            </div>
+
+            <div class="table-responsive mb-3">
+                <label class="form-label">Keywords</label>
+
             <table class="table">
                 <thead>
                     <tr>
