@@ -19,19 +19,16 @@ public class KeywordSetDetailViewModel : IKeywordSetDetailViewModel
 
     public KeywordSetDetailViewModel(IKeywordService keywordService)
     {
-        Console.WriteLine("ListKeywordSetsViewModel constructed.");
         _keywordService = keywordService;
     }
 
     public async Task RetrieveKeywordSetAsync(int id)
     {
         KeywordSet = await _keywordService.GetById(id);
-        Console.WriteLine($"KeywordSet {id} retrieved.");
     }
 
     public async Task RetrieveKeywordsAsync()
     {
         Keywords = await _keywordService.GetKeywords(KeywordSet.Id);
-        Console.WriteLine($"Keywords for KeywordSet {KeywordSet.Id} retrieved.");
     }
 }

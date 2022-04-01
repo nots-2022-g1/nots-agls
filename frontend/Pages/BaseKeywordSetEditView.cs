@@ -12,7 +12,8 @@ public class BaseKeywordSetEditView : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await ViewModel.FetchKeywordSetAsync(KeywordSetId);
+        await ViewModel.RetrieveKeywordSetAsync(KeywordSetId);
+        await ViewModel.RetrieveKeywordsAsync();
     }
     protected async void HandleValidSubmit()
     {

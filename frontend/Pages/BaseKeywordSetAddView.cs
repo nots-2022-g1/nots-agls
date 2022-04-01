@@ -19,6 +19,6 @@ public class BaseKeywordSetAddView : ComponentBase
     protected async void HandleValidSubmit()
     {
         await ViewModel.AddKeywordAsync();
-        NavManager.NavigateTo($"keywordsets/{KeywordSetId}");
+        NavManager.NavigateTo($"keywordsets/{KeywordSetId}/edit");
     }
 }
