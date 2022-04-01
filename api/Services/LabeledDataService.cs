@@ -16,11 +16,12 @@ public class LabeledDataService : ILabeledDataService
     
     public async Task<LabeledData?> Get(int dataSetId, int id)
     {
-        return await _dataRepository.FirstOrDefaultAsync(e => e.DataSetId.Equals(dataSetId) && e.Id.Equals(id));
+        return await _dataRepository.FirstOrDefaultAsync(e => e.DatasetId.Equals(dataSetId) && e.Id.Equals(id));
     }
     public async Task<IList<LabeledData>> Get(int dataSetId)
     {
-        return await _dataRepository.Where(e => e.DataSetId.Equals(dataSetId)).ToListAsync();
+        return await _dataRepository.Where(e => e.DatasetId.Equals(dataSetId))
+            .Include(e => e.GitCommit).ToListAsync();
     }
 
     public async Task<LabeledData> Create(LabeledData data)

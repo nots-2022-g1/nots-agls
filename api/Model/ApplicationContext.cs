@@ -34,7 +34,7 @@ namespace api.Model
                     .OnDelete(DeleteBehavior.NoAction);
                 e.HasOne(labeledData => labeledData.Dataset)
                     .WithMany()
-                    .HasForeignKey(labeledData => labeledData.DataSetId)
+                    .HasForeignKey(labeledData => labeledData.DatasetId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 

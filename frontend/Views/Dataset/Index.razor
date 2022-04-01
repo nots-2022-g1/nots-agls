@@ -1,10 +1,12 @@
 @page "/datasets"
 
+@using BlazorDownloadFile
+@using System.Text
+
 <PageTitle>Datasets</PageTitle>
 
-@using frontend.Models
-@using frontend.Services
 @inject DatasetService DatasetService
+@inject IBlazorDownloadFileService BlazorDownloadFileService;
 
 <div class="row my-3">
     <nav aria-label="breadcrumb" class="d-flex  flex-row justify-content-between align-items-center">
@@ -38,6 +40,7 @@
                     <p><em>Loading...</em></p>
                 }
                 else
+                {
                     @foreach (var dataset in datasets)
                     {
                         <tr>
@@ -48,7 +51,9 @@
                             <td>@dataset.UpdatedDate</td>
                             <td>
                                 <div class="d-flex flex-row-reverse">
-
+                                    <button class="btn btn-secondary btn-sm mx-1" @onclick="() => handleExport(dataset.Id)">
+                                        <span class="oi oi-document"></span>
+                                    </button>
                                     <button class="btn btn-danger btn-sm mx-1" @onclick="() => handleDelete(dataset.Id)">
                                         <span class="oi oi-trash"></span>
                                     </button>
@@ -59,6 +64,7 @@
                             </td>
                         </tr>
                     }
+                }
             </tbody>
         </table>
     </div>
@@ -77,6 +83,12 @@
             datasets = await DatasetService.Get();
             StateHasChanged();
         }
+    }
+
+    private async void handleExport(int id)
+    {
+        var csv = await DatasetService.GenerateCsvAsync(id);
+        await BlazorDownloadFileService.DownloadFileFromText($"dataset{id}-export", csv, Encoding.ASCII, "text/csv");
     }
 
     protected override async Task OnInitializedAsync()

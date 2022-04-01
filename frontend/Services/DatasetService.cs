@@ -1,5 +1,7 @@
+using System.Text;
 using Refit;
 using frontend.Models;
+using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
 namespace frontend.Services;
@@ -32,6 +34,11 @@ public class DatasetService : IDatasetService
         return await _client.GetById(id);
     }
 
+    public async Task<List<LabeledData>> GetLabeledData(int id)
+    {
+        return await _client.GetLabeledData(id);
+    }
+
     public async Task<ApiResponse<Dataset>> Update(int id, DatasetDto dataset)
     {
         return await _client.Update(id, dataset);
@@ -40,5 +47,23 @@ public class DatasetService : IDatasetService
     public async Task<ApiResponse<Dataset>> Delete(int id)
     {
         return await _client.Delete(id);
+    }
+
+    public async Task<string> GenerateCsvAsync(int id)
+    {
+        var response = await _client.GetLabeledData(id);
+        
+        var columns = new List<string>() {"GitCommitMessage", "IsUseful", "MatchedOnKeyword"};
+        
+        var csvFile = string.Join(",", columns);
+        
+        foreach (var labeledData in response)
+        {
+            var csvRow = Environment.NewLine;
+            csvRow += $"{labeledData.GitCommit.Message},{labeledData.IsUseful},null";
+            csvFile += csvRow;
+        }
+
+        return csvFile;
     }
 }

@@ -6,6 +6,6 @@ namespace frontend.Services
     public interface ICommitService
     {
         [Get("/repos/{repoId}/commits")]
-        Task<List<Commit>> GetByRepoId(int repoId);
+        Task<List<GitCommit>> GetByRepoId(int repoId);
     }
 }

@@ -1,3 +1,4 @@
+using BlazorDownloadFile;
 using frontend.Services;
 using frontend.ViewModels;
 using frontend.ViewModels.Commits;
@@ -18,7 +19,7 @@ builder.Host.UseSerilog((ctx, lc) => lc
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-
+builder.Services.AddBlazorDownloadFile();
 
 // -- Keywords
 builder.Services.AddHttpClient<IKeywordService, KeywordService>();

@@ -13,7 +13,7 @@ public class CommitService : ICommitService
         _client = RestService.For<ICommitService>(httpClient, new RefitSettings());
     }
 
-    public async Task<List<Commit>> GetByRepoId(int repoId)
+    public async Task<List<GitCommit>> GetByRepoId(int repoId)
     {
         return await _client.GetByRepoId(repoId);
     }
