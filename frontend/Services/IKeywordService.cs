@@ -23,4 +23,6 @@ public interface IKeywordService
     [Delete("/keywordsets/{id}")]
     Task RemoveKeywordSet(int id);
     
+    [Put("/keywordsets/{id}")]
+    Task<KeywordSet> UpdateKeywordSet(int id, KeywordSetDto dto);
 }

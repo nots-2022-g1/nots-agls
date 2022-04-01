@@ -25,6 +25,7 @@ builder.Services.AddTransient<IKeywordSetListViewModel, KeywordSetListViewModel>
 builder.Services.AddTransient<IKeywordSetDetailViewModel, KeywordSetDetailViewModel>();
 builder.Services.AddTransient<IKeywordSetAddViewModel, KeywordSetAddViewModel>();
 builder.Services.AddTransient<IKeywordSetCreateViewModel, KeywordSetCreateViewModel>();
+builder.Services.AddTransient<IKeywordSetEditViewModel, KeywordSetEditViewModel>();
 
 builder.Services.AddHttpClient<IDatasetService, DatasetService>();
 builder.Services.AddSingleton<DatasetService>();
