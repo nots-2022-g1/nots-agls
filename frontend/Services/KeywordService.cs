@@ -47,4 +47,9 @@ public class KeywordService : IKeywordService
     {
         return _client.UpdateKeywordSet(id, dto);
     }
+
+    public Task RemoveKeyword(int keywordSetId, int id)
+    {
+        return _client.RemoveKeyword(keywordSetId, id);
+    }
 }

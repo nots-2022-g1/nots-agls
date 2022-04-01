@@ -25,4 +25,7 @@ public interface IKeywordService
     
     [Put("/keywordsets/{id}")]
     Task<KeywordSet> UpdateKeywordSet(int id, KeywordSetDto dto);
+    
+    [Delete("/keywordsets/{keywordSetId}/keywords/{id}")]
+    Task RemoveKeyword(int keywordSetId, int id);
 }

@@ -20,4 +20,11 @@ public class BaseKeywordSetEditView : ComponentBase
         await ViewModel.UpdateKeywordSetAsync();
         NavManager.NavigateTo($"keywordsets/{KeywordSetId}");
     }
+
+    protected async void HandleDeleteClick(int id)
+    {
+        await ViewModel.DeleteKeywordAsync(id);
+        await ViewModel.RetrieveKeywordsAsync();
+        StateHasChanged();
+    }
 }

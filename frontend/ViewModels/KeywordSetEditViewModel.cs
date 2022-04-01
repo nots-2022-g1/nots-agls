@@ -11,6 +11,7 @@ public interface IKeywordSetEditViewModel
     Task RetrieveKeywordSetAsync(int id);
     Task RetrieveKeywordsAsync();
     Task UpdateKeywordSetAsync();
+    Task DeleteKeywordAsync(int id);
 }
 
 public class KeywordSetEditViewModel : IKeywordSetEditViewModel
@@ -36,5 +37,10 @@ public class KeywordSetEditViewModel : IKeywordSetEditViewModel
     public async Task UpdateKeywordSetAsync()
     {
         KeywordSet = await _keywordService.UpdateKeywordSet(KeywordSet.Id, KeywordSet.Adapt<KeywordSetDto>());
+    }
+
+    public async Task DeleteKeywordAsync(int id)
+    {
+        await _keywordService.RemoveKeyword(KeywordSet.Id, id);
     }
 }
