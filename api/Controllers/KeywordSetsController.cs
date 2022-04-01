@@ -48,4 +48,11 @@ public class KeywordSetsController: ControllerBase
         var modified = await _keywordSetService.Update(keywordsSet);
         return Ok(modified);
     }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _keywordSetService.Delete(id);
+        return Ok();
+    }
 }

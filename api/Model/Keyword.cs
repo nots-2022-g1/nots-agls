@@ -21,8 +21,9 @@ public class KeywordDto
 
 public class KeywordResponseDto
 {
+    public int Id { get; set; }
     public string Name { get; set; }
-    public int KeywordsetId { get; set; }
+    public int KeywordSetId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime LastModifiedAt { get; set; }
 }
