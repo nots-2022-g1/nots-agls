@@ -1,10 +1,16 @@
 ﻿@page "/"
-@inject IConfiguration configuration
+@inject IConfiguration _configuration
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Home | AGLS</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
+<div class="d-flex justify-content-center align-items-center flex-column mt-5 gap-2">
+    <h1>Hey you, welcome to <span class="text-primary">AGLS</span></h1>
+    <p class="opacity-75 fst-italic">also known as</p>
+    <h2 class="fst-italic"><span class="text-primary fw-bold">A</span>utomated <span class="text-primary fw-bold">G</span>it <span class="text-primary fw-bold">L</span>abeling <span class="text-primary fw-bold">S</span>ystem</h2>
+    <p class="opacity-75 fst-italic">but please, call it &lsquo;Aggles&rsquo;</p>
+    <a href="/repositories">
+        <button class="btn btn-primary btn-lg">
+            Get started &raquo;
+        </button>
+    </a>
+</div>

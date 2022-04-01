@@ -1,7 +1,9 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿<div class="top-row navbar navbar-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">frontend</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+        <a class="d-flex flex-fill justify-content-center align-content-center" href="/">
+            <img src="img/typeface_agls.png" alt="AGLS logo" style="height: 34px">
+        </a>
+        <button title="Navigation menu" class="navbar-toggler position-absolute" style="right: 4px" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
@@ -17,7 +19,7 @@
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/repositories">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Repos
+                <span class="oi oi-list" aria-hidden="true"></span> Repositories
             </NavLink>
         </div>
 

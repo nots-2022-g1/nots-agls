@@ -1,26 +1,82 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+:root {
+    --actions-width: 150px;
+}
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+.sidebar {
+    background: #00416a; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to bottom, #00416a, #799f0c, #ffe000) !important; /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to bottom, #00416a, #799f0c, #ffe000) !important; /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.sidebar > .top-row {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.container > * {
+    margin-bottom: 16px !important;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .form-container {
+    max-width: 600px;
+}
+
+.form-container > *:not(.table-responsive) {
     max-width: 400px;
 }
 
 th {
     padding: 0 5px;
+    text-transform: capitalize;
+}
+
+th.actions {
+    text-align: end;
+    width: var(--actions-width);
+}
+
+tr {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+tr:last-of-type {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.5);
 }
 
 td {
     padding: 0 5px;
+    border: none;
+    vertical-align: middle;
 }
 
 td.actions {
-    width: 150px;
-}
-
-td.actions button {
-    --button-size: 30px;
-    width: var(--button-size);
-    height: var(--button-size);
-    padding: 0;
-    margin: 0;
-    font-size: 0.7em;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    flex-grow: 1;
+    gap: 8px;
+    width: var(--actions-width);
 }

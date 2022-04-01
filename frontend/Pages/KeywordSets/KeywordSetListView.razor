@@ -1,8 +1,8 @@
-@page "/datasets"
+@page "/keywordsets"
 
-<PageTitle>All Datasets | AGLS</PageTitle>
+<PageTitle>All Keywordsets | AGLS</PageTitle>
 
-@inject DatasetService DatasetService
+@inherits BaseKeywordSetListView
 
 <div class="row my-3">
     <nav aria-label="breadcrumb" class="d-flex flex-row justify-content-between align-items-center">
@@ -10,10 +10,10 @@
             <li class="breadcrumb-item">
                 <a href="/">Home</a>
             </li>
-            <li class="breadcrumb-item" aria-current="page">Datasets</li>
+            <li class="breadcrumb-item" aria-current="page">Keywordsets</li>
             <li class="breadcrumb-item active" aria-current="page">View All</li>
         </ol>
-        <a href="/datasets/create" class="btn btn-sm btn-primary py-1 btn-lg fw-bold">
+        <a href="/keywordsets/create" class="btn btn-sm btn-primary py-1 btn-lg fw-bold">
             NEW <span class="oi oi-plus ps-1"></span>
         </a>
     </nav>
@@ -26,14 +26,13 @@
             <tr>
                 <th>id</th>
                 <th>name</th>
-                <th>count</th>
                 <th>creation date</th>
                 <th>modified date</th>
                 <th class="actions">actions</th>
             </tr>
             </thead>
             <tbody>
-            @if (datasets == null)
+            @if (ViewModel.KeywordSets == null)
             {
                 <p>
                     <em>Loading...</em>
@@ -41,21 +40,25 @@
             }
             else
             {
-                @foreach (var dataset in datasets)
+                @foreach (var keywordSet in ViewModel.KeywordSets)
                 {
                     <tr>
-                        <td>#@dataset.Id</td>
-                        <td>@dataset.Name</td>
-                        <td>TODO</td>
-                        <td>@dataset.CreatedDate</td>
-                        <td>@dataset.UpdatedDate</td>
+                        <td>#@keywordSet.Id</td>
+                        <td>@keywordSet.Name</td>
+                        <td>@keywordSet.CreatedAt.ToShortDateString()</td>
+                        <td>@keywordSet.LastModifiedAt.ToShortDateString()</td>
                         <td class="actions">
-                            <a href="/datasets/@dataset.Id">
+                            <a href="/keywordsets/@keywordSet.Id">
+                                <button class="btn btn-primary btn-sm">
+                                    <span class="oi oi-eye"></span>
+                                </button>
+                            </a>
+                            <a href="/keywordsets/@keywordSet.Id/edit">
                                 <button class="btn btn-secondary btn-sm">
                                     <span class="oi oi-pencil"></span>
                                 </button>
                             </a>
-                            <button class="btn btn-danger btn-sm" @onclick="() => handleDelete(dataset.Id)">
+                            <button @onclick="() => HandleRemoveClick(keywordSet.Id)" class="btn btn-danger btn-sm">
                                 <span class="oi oi-trash"></span>
                             </button>
                         </td>
@@ -66,24 +69,3 @@
         </table>
     </div>
 </div>
-
-@code
-{
-    private List<Dataset>? datasets { get; set; }
-
-    private async void handleDelete(int id)
-    {
-        var response = await DatasetService.Delete(id);
-
-        if (((int) response.StatusCode) == 200)
-        {
-            datasets = await DatasetService.Get();
-            StateHasChanged();
-        }
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        datasets = await DatasetService.Get();
-    }
-}

@@ -1,59 +1,64 @@
-@page "/repositories/view/{Id:int}"
-@using frontend.ViewModels.Commits
+@page "/repositories/{Id:int}"
 
-<PageTitle>View repository @Id</PageTitle>
+<PageTitle>View Repository #@Id | AGLS</PageTitle>
 
 @inject IViewRepositoryViewModel _viewModel;
 @inject IListCommitsViewModel _commitsViewModel;
 @inject NavigationManager _navigation;
 
-<div class="d-flex flex-row justify-content-between align-items-center">
-    <h1>Repositories &#187; View</h1>
-    <a href="/repositories">
-        <button class="btn btn-small btn-danger">
-            Cancel
-        </button>
-    </a>
+<div class="row my-3">
+    <nav aria-label="breadcrumb" class="d-flex flex-row justify-content-between align-items-center">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <a href="/">Home</a>
+            </li>
+            <li class="breadcrumb-item" aria-current="page">
+                <a href="/repositories">
+                    Repositories
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">View #@Id</li>
+        </ol>
+        <a href="/repositories" class="btn btn-sm btn-primary py-1 btn-lg fw-bold">
+            BACK <span class="oi oi-caret-left ps-1"></span>
+        </a>
+    </nav>
 </div>
 
-<div class="w-full border-top my-3"></div>
-
 <div class="container">
-    <div class="form-container m-auto">
-        <form>
-            <div class="mb-3">
-                <label for="repoNaam" class="form-label">Naam</label>
-                <input type="text" class="form-control" id="repoNaam" @bind="_viewModel.Repository.Naam" disabled="disabled">
-            </div>
-            <div class="mb-3">
-                <label for="repoUrl" class="form-label">URL</label>
-                <input type="text" class="form-control" id="repoUrl" @bind="_viewModel.Repository.Url" disabled="disabled">
-            </div>
-        </form>
+    <h1 class="text-primary">@_viewModel.Repository.Naam</h1>
+
+    <div>
+        <a href="@_viewModel.Repository.Url" target="_blank" rel="noopener noreferrer">
+            @_viewModel.Repository.Url
+        </a>
     </div>
 
-    <table class="table m-auto">
-        <thead>
-        <tr>
-            <th>Hash</th>
-            <th>Datum/tijd</th>
-            <th>Bericht</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var commit in _commitsViewModel.Commits)
-        {
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
             <tr>
-                <td>@commit.Hash</td>
-                <td>@commit.Date</td>
-                <td>@commit.Message</td>
+                <th>hash</th>
+                <th>date / time</th>
+                <th>Message</th>
             </tr>
-        }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            @foreach (var commit in _commitsViewModel.Commits)
+            {
+                <tr>
+                    <td>@commit.Hash</td>
+                    <td>@commit.Date</td>
+                    <td>@commit.Message</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
 </div>
 
 @code {
+
     [Parameter]
     public int Id { get; set; }
 
@@ -62,4 +67,5 @@
         await _viewModel.LoadRepositoryAsync(Id);
         await _commitsViewModel.FetchCommitsForRepoAsync(Id);
     }
+
 }
