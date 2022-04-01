@@ -16,10 +16,9 @@ public class BaseKeywordSetAddView : ComponentBase
         ViewModel.Dto = new KeywordDto {KeywordSetId = ViewModel.KeywordSet.Id};
     }
 
-    protected void HandleValidSubmit()
+    protected async void HandleValidSubmit()
     {
-        Console.WriteLine("HandleValidSubmit called");
-        ViewModel.AddKeywordAsync();
+        await ViewModel.AddKeywordAsync();
         NavManager.NavigateTo($"keywordsets/{KeywordSetId}");
     }
 }

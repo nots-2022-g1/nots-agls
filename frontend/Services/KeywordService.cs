@@ -37,4 +37,9 @@ public class KeywordService : IKeywordService
     {
         return _client.AddKeywordSet(dto);
     }
+
+    public Task RemoveKeywordSet(int id)
+    {
+        return _client.RemoveKeywordSet(id);
+    }
 }

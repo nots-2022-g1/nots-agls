@@ -7,7 +7,9 @@
 
 @if (ViewModel.KeywordSets == null)
 {
-    <p><em>Loading...</em></p>
+    <p>
+        <em>Loading...</em>
+    </p>
 }
 else
 {
@@ -18,6 +20,7 @@ else
             <th>Name</th>
             <th>Created At</th>
             <th>Last Modified At</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -25,9 +28,16 @@ else
         {
             <tr>
                 <td>@keywordSet.Id</td>
-                <td><a href="keywordsets/@keywordSet.Id">@keywordSet.Name</a></td>
+                <td>
+                    <a href="keywordsets/@keywordSet.Id">@keywordSet.Name</a>
+                </td>
                 <td>@keywordSet.CreatedAt.ToShortDateString()</td>
                 <td>@keywordSet.LastModifiedAt.ToShortDateString()</td>
+                <td>
+                    <button @onclick="() => HandleRemoveClick(keywordSet.Id)">
+                        Remove
+                    </button>
+                </td>
             </tr>
         }
         </tbody>

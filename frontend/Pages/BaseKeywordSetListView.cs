@@ -1,5 +1,6 @@
 using frontend.ViewModels;
 using Microsoft.AspNetCore.Components;
+using Serilog;
 
 namespace frontend.Pages;
 
@@ -16,5 +17,12 @@ public class BaseKeywordSetListView : ComponentBase
     protected void HandleAddClick()
     {
         NavManager.NavigateTo($"keywordsets/add");
+    }
+    
+    protected async void HandleRemoveClick(int id)
+    {
+        await ViewModel.RemoveKeywordSetAsync(id);
+        await ViewModel.RetrieveKeywordSetsAsync();
+        StateHasChanged();
     }
 }

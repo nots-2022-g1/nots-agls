@@ -14,19 +14,8 @@ public interface IKeywordSetDetailViewModel
 public class KeywordSetDetailViewModel : IKeywordSetDetailViewModel
 {
     private readonly IKeywordService _keywordService;
-    private KeywordSet _KeywordSet;
-
-    public KeywordSet KeywordSet
-    {
-        get => _KeywordSet;
-        set => _KeywordSet = value;
-    }
-    private List<Keyword> _keywords;
-    public List<Keyword> Keywords 
-    { 
-        get => _keywords; 
-        set => _keywords = value; 
-    }
+    public KeywordSet KeywordSet { get; set; }
+    public List<Keyword> Keywords { get; set; }
 
     public KeywordSetDetailViewModel(IKeywordService keywordService)
     {
@@ -36,13 +25,13 @@ public class KeywordSetDetailViewModel : IKeywordSetDetailViewModel
 
     public async Task RetrieveKeywordSetAsync(int id)
     {
-        _KeywordSet = await _keywordService.GetById(id);
+        KeywordSet = await _keywordService.GetById(id);
         Console.WriteLine($"KeywordSet {id} retrieved.");
     }
 
     public async Task RetrieveKeywordsAsync()
     {
-        _keywords = await _keywordService.GetKeywords(_KeywordSet.Id);
-        Console.WriteLine($"Keywords for KeywordSet {_KeywordSet.Id} retrieved.");
+        Keywords = await _keywordService.GetKeywords(KeywordSet.Id);
+        Console.WriteLine($"Keywords for KeywordSet {KeywordSet.Id} retrieved.");
     }
 }

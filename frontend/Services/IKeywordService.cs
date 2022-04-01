@@ -19,4 +19,8 @@ public interface IKeywordService
     
     [Post("/keywordsets")]
     Task<KeywordSet> AddKeywordSet(KeywordSetDto dto);
+    
+    [Delete("/keywordsets/{id}")]
+    Task RemoveKeywordSet(int id);
+    
 }
