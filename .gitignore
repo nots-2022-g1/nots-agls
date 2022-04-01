@@ -15,3 +15,4 @@ frontend/localhost.crt
 frontend/localhost.csr
 frontend/localhost.key
 frontend/localhost.pfx
+frontend/appsettings.Development.local.json
