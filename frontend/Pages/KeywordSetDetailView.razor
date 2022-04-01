@@ -1,0 +1,49 @@
+@page "/keywordsets/{KeywordSetId:int}"
+
+@inherits BaseKeywordSetView
+
+@if (KeywordSetDetailViewModel.KeywordSet == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <h1>@KeywordSetDetailViewModel.KeywordSet.Name</h1>
+    <p>This component demonstrates fetching data from the server.</p>
+}
+
+@if (KeywordSetDetailViewModel.Keywords == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Created At</th>
+            <th>Last Modified At</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var keyword in KeywordSetDetailViewModel.Keywords)
+        {
+            <tr>
+                <td>@keyword.Id</td>
+                <td>@keyword.Name</td>
+                <td>@keyword.CreatedAt.ToShortDateString()</td>
+                <td>@keyword.LastModifiedAt.ToShortDateString()</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+<button @onclick="HandleAddClick">
+    Add
+</button>
