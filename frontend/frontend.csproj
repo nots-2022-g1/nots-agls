@@ -13,8 +13,4 @@
     <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="wwwroot\js\saveToFile.js" />
-  </ItemGroup>
-
 </Project>
