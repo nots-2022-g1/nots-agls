@@ -42,7 +42,7 @@
                             <i class="oi oi-pencil"></i>
                         </button>
                     </a>
-                    <button class="btn btn-danger">
+                    <button class="btn btn-danger" @onclick="() => Delete(repository.Id)">
                         <i class="oi oi-trash"></i>
                     </button>
                 </td>
@@ -53,4 +53,10 @@
 
 @code {
     protected override async Task OnInitializedAsync() => await _viewModel.FetchRepositoriesAsync();
+
+    private async void Delete(int id)
+    {
+        await _viewModel.DeleteRepositoryAsync(id);
+        StateHasChanged();
+    }
 }
