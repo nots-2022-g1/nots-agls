@@ -31,6 +31,9 @@ builder.Services.AddTransient<IKeywordSetEditViewModel, KeywordSetEditViewModel>
 // -- Datasets
 builder.Services.AddHttpClient<IDatasetService, DatasetService>();
 builder.Services.AddSingleton<DatasetService>();
+// -- OpenAI
+builder.Services.AddHttpClient<IOpenAIService, OpenAIService>();
+builder.Services.AddSingleton<OpenAIService>();
 // -- Repositories
 builder.Services.AddHttpClient<IRepositoryService, RepositoryService>();
 builder.Services.AddSingleton<RepositoryService>();
