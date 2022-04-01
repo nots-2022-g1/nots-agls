@@ -86,7 +86,7 @@
     }
 
     private List<Repository>? gitRepositories { get; set; }
-    private List<Keyword>? keywordSets { get; set; }
+    private List<KeywordSet>? keywordSets { get; set; }
     protected override async Task OnInitializedAsync()
     {
         gitRepositories = await RepositoryService.Get();

@@ -1,0 +1,65 @@
+@* TODO: Add Delete single keyword logic, Add Edit single keyword logic *@
+
+@page "/keywordsets/{KeywordSetId:int}"
+
+<PageTitle>View keywordset</PageTitle>
+
+@inherits BaseKeywordSetDetailView
+
+<div class="row my-3">
+    <nav aria-label="breadcrumb" class="d-flex  flex-row justify-content-between align-items-center">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/keywordsets">Keywordsets</a></li>
+            <li class="breadcrumb-item active" aria-current="page">View</li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewModel?.KeywordSet?.Name</li>
+        </ol>
+        <a href="/keywordsets" class="btn btn-sm btn-primary py-1">back</a>
+    </nav>
+</div>
+
+<div class="row">
+    <div class="mb-3">
+        @if (ViewModel.KeywordSet == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <h1>@ViewModel.KeywordSet.Name</h1>
+
+            <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>name</th>
+                        <th>creation date</th>
+                        <th>modified date</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewModel.Keywords == null)
+                        {
+                            <p><em>Loading...</em></p>
+                        }
+                        else
+                        {
+                            @foreach (var keyword in ViewModel.Keywords)
+                            {
+                                <tr>
+                                    <td>@keyword.Id</td>
+                                    <td>@keyword.Name</td>
+                                    <td>@keyword.CreatedAt.ToShortDateString()</td>
+                                    <td>@keyword.LastModifiedAt.ToShortDateString()</td>
+
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
