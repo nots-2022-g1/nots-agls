@@ -26,7 +26,7 @@ builder.Services.AddSingleton<KeywordService>();
 // -- Datasets
 builder.Services.AddHttpClient<IDatasetService, DatasetService>();
 builder.Services.AddSingleton<DatasetService>();
-// OpenAI
+// -- OpenAI
 builder.Services.AddHttpClient<IOpenAIService, OpenAIService>();
 builder.Services.AddSingleton<OpenAIService>();
 // -- Repositories
