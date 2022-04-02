@@ -31,20 +31,21 @@ public class LabeledDataController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get(int dataSetId)
     {
-        return Ok(await _labeledDataService.Get(dataSetId));
+        var result = await _labeledDataService.Get(dataSetId);
+        return Ok(result.Adapt<IList<LabeledDataDto>>());
     }
 
     [HttpPost]
-    public async Task<IActionResult> PostData(int dataSetId, LabeledDataDto data)
+    public async Task<IActionResult> PostData(int dataSetId, LabeledDataCreateDto data)
     {
         var created = await _labeledDataService.Create(data.Adapt<LabeledData>());
         return Created($"/datasets/{dataSetId}/data/{created.Id}", created);
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> PutData(int dataSetId, int id, LabeledDataDto data)
+    public async Task<IActionResult> PutData(int dataSetId, int id, LabeledDataCreateDto data)
     {
-        data.DataSetId = dataSetId;
+        data.DatasetId = dataSetId;
         var labeledData = data.Adapt<LabeledData>();
         labeledData.Id = id;
         var modified = await _labeledDataService.Update(labeledData);

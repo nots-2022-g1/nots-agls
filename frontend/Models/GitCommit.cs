@@ -1,6 +1,6 @@
 ﻿namespace frontend.Models;
  
-public class Commit
+public class GitCommit
 {
     public string Hash { get; set; }
     public DateTime Date { get; set; }
