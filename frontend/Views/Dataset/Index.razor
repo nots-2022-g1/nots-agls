@@ -89,7 +89,7 @@
     {
         var csv = await DatasetService.GenerateCsvAsync(id);
         var date = DateTime.Now.ToString("dd-MM-yyyy");
-        await BlazorDownloadFileService.DownloadFileFromText($"export-{date}-dataset{id}.csv", csv, Encoding.ASCII, "text/csv");
+        await BlazorDownloadFileService.DownloadFileFromText($"export_dataset{id}_{date}.csv", csv, Encoding.ASCII, "text/csv");
     }
 
     protected override async Task OnInitializedAsync()
