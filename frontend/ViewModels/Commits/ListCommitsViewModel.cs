@@ -5,7 +5,7 @@ namespace frontend.ViewModels.Commits;
 
 public interface IListCommitsViewModel
 {
-    public List<Commit> Commits { get; }
+    public List<GitCommit> Commits { get; }
     public Task FetchCommitsForRepoAsync(int repoId);
 }
 
@@ -18,7 +18,7 @@ public class ListCommitsViewModel : IListCommitsViewModel
         _commitService = commitService;
     }
 
-    public List<Commit> Commits { get; private set; } = new();
+    public List<GitCommit> Commits { get; private set; } = new();
 
     public async Task FetchCommitsForRepoAsync(int repoId)
     {

@@ -14,9 +14,14 @@ public interface IDatasetService
     [Get("/datasets/{id}")]
     Task<Dataset> GetById(int id);
 
+    [Get("/datasets/{id}/labeledData")]
+    Task<List<LabeledData>> GetLabeledData(int id);
+
     [Put("/datasets/{id}")]
     Task<ApiResponse<Dataset>> Update(int id, DatasetDto datasetDto);
 
     [Delete("/datasets/{id}")]
     Task<ApiResponse<Dataset>> Delete(int id);
+
+    Task<string> GenerateCsvAsync(int id);
 }
