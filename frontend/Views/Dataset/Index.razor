@@ -3,19 +3,23 @@
 @using BlazorDownloadFile
 @using System.Text
 
-<PageTitle>Datasets</PageTitle>
+<PageTitle>All Datasets | AGLS</PageTitle>
 
 @inject DatasetService DatasetService
 @inject IBlazorDownloadFileService BlazorDownloadFileService;
 
 <div class="row my-3">
-    <nav aria-label="breadcrumb" class="d-flex  flex-row justify-content-between align-items-center">
+    <nav aria-label="breadcrumb" class="d-flex flex-row justify-content-between align-items-center">
         <ol class="breadcrumb m-0">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item">
+                <a href="/">Home</a>
+            </li>
             <li class="breadcrumb-item" aria-current="page">Datasets</li>
             <li class="breadcrumb-item active" aria-current="page">View All</li>
         </ol>
-        <a href="/dataset/create" class="btn btn-sm btn-success py-1">new dataset</a>
+        <a href="/datasets/create" class="btn btn-sm btn-primary py-1 btn-lg fw-bold">
+            NEW <span class="oi oi-plus ps-1"></span>
+        </a>
     </nav>
 </div>
 
@@ -23,48 +27,48 @@
     <div class="table-responsive">
         <table class="table">
             <thead>
-                <tr>
-                    <th>id</th>
-                    <th>name</th>
-                    <th>count</th>
-                    <th>creation date</th>
-                    <th>modified date</th>
-                    <th class="text-end">
-                        actions
-                    </th>
-                </tr>
+            <tr>
+                <th>id</th>
+                <th>name</th>
+                <th>count</th>
+                <th>creation date</th>
+                <th>modified date</th>
+                <th class="actions">actions</th>
+            </tr>
             </thead>
             <tbody>
-                @if (datasets == null)
+            @if (datasets == null)
+            {
+                <p>
+                    <em>Loading...</em>
+                </p>
+            }
+            else
+            {
+                @foreach (var dataset in datasets)
                 {
-                    <p><em>Loading...</em></p>
+                    <tr>
+                        <td>#@dataset.Id</td>
+                        <td>@dataset.Name</td>
+                        <td>TODO</td>
+                        <td>@dataset.CreatedDate</td>
+                        <td>@dataset.UpdatedDate</td>
+                        <td class="actions">
+                            <button class="btn btn-primary btn-sm" @onclick="() => handleExport(dataset.Id)">
+                                    <span class="oi oi-document"></span>
+                            </button>
+                            <a href="/datasets/@dataset.Id">
+                                <button class="btn btn-secondary btn-sm">
+                                    <span class="oi oi-pencil"></span>
+                                </button>
+                            </a>
+                            <button class="btn btn-danger btn-sm" @onclick="() => handleDelete(dataset.Id)">
+                                <span class="oi oi-trash"></span>
+                            </button>
+                        </td>
+                    </tr>
                 }
-                else
-                {
-                    @foreach (var dataset in datasets)
-                    {
-                        <tr>
-                            <td>@dataset.Id</td>
-                            <td>@dataset.Name</td>
-                            <td>TODO</td>
-                            <td>@dataset.CreatedDate</td>
-                            <td>@dataset.UpdatedDate</td>
-                            <td>
-                                <div class="d-flex flex-row-reverse">
-                                    <button class="btn btn-secondary btn-sm mx-1" @onclick="() => handleExport(dataset.Id)">
-                                        <span class="oi oi-document"></span>
-                                    </button>
-                                    <button class="btn btn-danger btn-sm mx-1" @onclick="() => handleDelete(dataset.Id)">
-                                        <span class="oi oi-trash"></span>
-                                    </button>
-                                    <a href="/dataset/@dataset.Id" class="btn btn-warning btn-sm mx-1">
-                                        <span class="oi oi-pencil"></span>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                }
+            }
             </tbody>
         </table>
     </div>
@@ -78,7 +82,7 @@
     {
         var response = await DatasetService.Delete(id);
 
-        if (((int)response.StatusCode) == 200)
+        if (((int) response.StatusCode) == 200)
         {
             datasets = await DatasetService.Get();
             StateHasChanged();

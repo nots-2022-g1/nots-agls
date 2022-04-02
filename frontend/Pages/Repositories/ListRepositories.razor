@@ -2,54 +2,66 @@
 
 @inject IListRepositoriesViewModel _viewModel
 
-<PageTitle>View all repositories</PageTitle>
+<PageTitle>All Repositories | AGLS</PageTitle>
 
-<div class="d-flex flex-row justify-content-between align-items-center">
-    <h1>Repositories &#187; View all</h1>
-    <a href="/repositories/create">
-        <button class="btn btn-small btn-success">
-            Add
-        </button>
-    </a>
+<div class="row my-3">
+    <nav aria-label="breadcrumb" class="d-flex flex-row justify-content-between align-items-center">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <a href="/">Home</a>
+            </li>
+            <li class="breadcrumb-item" aria-current="page">Repositories</li>
+            <li class="breadcrumb-item active" aria-current="page">View All</li>
+        </ol>
+        <a href="/repositories/create" class="btn btn-sm btn-primary py-1 btn-lg fw-bold">
+            NEW <span class="oi oi-plus ps-1"></span>
+        </a>
+    </nav>
 </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Naam</th>
-            <th>URL</th>
-            <th>Acties</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var repository in _viewModel.Repositories)
-        {
+<div class="row">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
             <tr>
-                <td>@repository.Naam</td>
-                <td>
-                    <a href="@repository.Url" target="_blank" rel="noopener noreferrer">
-                        @repository.Url
-                    </a>
-                </td>
-                <td class="actions">
-                    <a href="/repositories/view/@repository.Id">
-                        <button class="btn btn-primary">
-                            <i class="oi oi-info"></i>
-                        </button>
-                    </a>
-                    <a href="/repositories/edit/@repository.Id">
-                        <button class="btn btn-secondary">
-                            <i class="oi oi-pencil"></i>
-                        </button>
-                    </a>
-                    <button class="btn btn-danger" @onclick="() => Delete(repository.Id)">
-                        <i class="oi oi-trash"></i>
-                    </button>
-                </td>
+                <th>id</th>
+                <th>name</th>
+                <th>link</th>
+                <th class="actions">Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+            </thead>
+            <tbody>
+            @foreach (var repository in _viewModel.Repositories)
+            {
+                <tr>
+                    <td>#@repository.Id</td>
+                    <td>@repository.Naam</td>
+                    <td>
+                        <a href="@repository.Url" target="_blank" rel="noopener noreferrer">
+                            @repository.Url
+                        </a>
+                    </td>
+                    <td class="actions">
+                        <a href="/repositories/@repository.Id">
+                            <button class="btn btn-primary btn-sm">
+                                <i class="oi oi-eye"></i>
+                            </button>
+                        </a>
+                        <a href="/repositories/@repository.Id/edit">
+                            <button class="btn btn-secondary btn-sm">
+                                <i class="oi oi-pencil"></i>
+                            </button>
+                        </a>
+                        <button class="btn btn-danger btn-sm" @onclick="() => Delete(repository.Id)">
+                            <i class="oi oi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
 
 @code {
     protected override async Task OnInitializedAsync() => await _viewModel.FetchRepositoriesAsync();
@@ -59,4 +71,5 @@
         await _viewModel.DeleteRepositoryAsync(id);
         StateHasChanged();
     }
+
 }

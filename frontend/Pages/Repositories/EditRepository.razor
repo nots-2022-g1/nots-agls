@@ -1,42 +1,54 @@
-@page "/repositories/edit/{Id:int}"
+@page "/repositories/{Id:int}/edit"
 
-<PageTitle>Edit repository @Id</PageTitle>
+<PageTitle>Edit Repository #@Id | AGLS</PageTitle>
 
 @inject IEditRepositoryViewModel _viewModel;
 @inject NavigationManager _navigation;
 
-<div class="d-flex flex-row justify-content-between align-items-center">
-    <h1>Repositories &#187; Edit</h1>
-    <a href="/repositories">
-        <button class="btn btn-small btn-danger">
-            Cancel
-        </button>
-    </a>
+<div class="row my-3">
+    <nav aria-label="breadcrumb" class="d-flex flex-row justify-content-between align-items-center">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <a href="/">Home</a>
+            </li>
+            <li class="breadcrumb-item" aria-current="page">
+                <a href="/repositories">
+                    Repositories
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Edit #@_viewModel.Repository.Id</li>
+        </ol>
+        <a href="/repositories" class="btn btn-sm btn-primary py-1 btn-lg fw-bold">
+            BACK <span class="oi oi-caret-left ps-1"></span>
+        </a>
+    </nav>
 </div>
 
-<div class="w-full border-top my-3"></div>
+<div class="container form-container">
+    <div>
+        <label for="inputRepositoryId" class="form-label">Id</label>
+        <input type="text" class="form-control" id="inputRepositoryId" @bind="_viewModel.Repository.Id" disabled="disabled">
+    </div>
+    
+    <div>
+        <label for="inputRepositoryNaam" class="form-label">Name</label>
+        <input type="text" class="form-control" id="inputRepositoryNaam" @bind="_viewModel.Repository.Naam">
+    </div>
 
-<div class="container">
-    <div class="form-container m-auto">
-        <form>
-            <div class="mb-3">
-                <label for="repoNaam" class="form-label">Naam</label>
-                <input type="text" class="form-control" id="repoNaam" @bind="_viewModel.Repository.Naam">
-            </div>
-            <div class="mb-3">
-                <label for="repoUrl" class="form-label">URL</label>
-                <input type="text" class="form-control" id="repoUrl" @bind="_viewModel.Repository.Url">
-            </div>
-            <div class="d-grid mb-3">
-                <button class="btn btn-primary" type="button" @onclick="SubmitEdit">
-                    Bewerking toepassen
-                </button>
-            </div>
-        </form>
+    <div>
+        <label for="inputRepositoryUrl" class="form-label">URL</label>
+        <input type="text" class="form-control" id="inputRepositoryUrl" @bind="_viewModel.Repository.Url">
+    </div>
+
+    <div class="d-grid">
+        <button class="btn btn-sm btn-primary" type="button" @onclick="SubmitEdit">
+            Save changes
+        </button>
     </div>
 </div>
 
 @code {
+
     [Parameter]
     public int Id { get; set; }
 
@@ -50,4 +62,5 @@
         await _viewModel.SubmitEditAsync(Id);
         _navigation.NavigateTo("/repositories");
     }
+
 }
