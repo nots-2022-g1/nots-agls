@@ -22,9 +22,12 @@ public class DataSetsController : GenericCrudController<Dataset, DataSetDto>
     private readonly IGitCommitService _gitCommitService;
     private readonly IKeywordService _keywordService;
 
-    public DataSetsController(IGenericCrudService<Dataset> service, ILabeledDataService labeledDataService,
-        IGitCommitService gitCommitService, IKeywordService keywordService) :
-        base(service)
+    public DataSetsController(
+        IGenericCrudService<Dataset> service,
+        ILabeledDataService labeledDataService,
+        IGitCommitService gitCommitService,
+        IKeywordService keywordService
+    ) : base(service)
     {
         _labeledDataService = labeledDataService;
         _gitCommitService = gitCommitService;
@@ -46,14 +49,14 @@ public class DataSetsController : GenericCrudController<Dataset, DataSetDto>
         var modified = await _service.Update(dataSet);
         return Ok(modified);
     }
-    
+
     [HttpPost("autolabel")]
     public async Task<IActionResult> AutoLabel(AutoLabelConfig config)
     {
         var commits = await _gitCommitService.Get(config.GitRepoId);
         var keywords = await _keywordService.GetByKeywordSetId(config.KeywordSetId);
         var autoLabeledData = new List<LabeledData>();
-        
+
         foreach (var commit in commits)
         {
             var labeledData = new LabeledData
@@ -69,6 +72,7 @@ public class DataSetsController : GenericCrudController<Dataset, DataSetDto>
                     labeledData.IsUseful = true;
                 }
             }
+
             autoLabeledData.Add(labeledData);
         }
 
