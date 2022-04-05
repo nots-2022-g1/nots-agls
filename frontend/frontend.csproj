@@ -13,4 +13,18 @@
     <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Dataset\Create.razor" />
+    <_ContentIncludedByDefault Remove="Views\Dataset\Edit.razor" />
+    <_ContentIncludedByDefault Remove="Views\Dataset\GeneratorModal.razor" />
+    <_ContentIncludedByDefault Remove="Views\Dataset\Index.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="Pages\Dataset\Create.razor" />
+    <AdditionalFiles Include="Pages\Dataset\Edit.razor" />
+    <AdditionalFiles Include="Pages\Dataset\GeneratorModal.razor" />
+    <AdditionalFiles Include="Pages\Dataset\Index.razor" />
+  </ItemGroup>
+
 </Project>

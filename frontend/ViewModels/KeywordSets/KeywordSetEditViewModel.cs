@@ -2,7 +2,7 @@ using frontend.Models;
 using frontend.Services;
 using Mapster;
 
-namespace frontend.ViewModels;
+namespace frontend.ViewModels.KeywordSets;
 
 public interface IKeywordSetEditViewModel
 {

@@ -1,8 +1,8 @@
 using BlazorDownloadFile;
 using frontend.Services;
-using frontend.ViewModels;
 using frontend.ViewModels.Commits;
 using frontend.ViewModels.Repositories;
+using frontend.ViewModels.KeywordSets;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -44,6 +44,7 @@ builder.Services.AddScoped<IViewRepositoryViewModel, ViewRepositoryViewModel>();
 builder.Services.AddScoped<IEditRepositoryViewModel, EditRepositoryViewModel>();
 // -- Commits
 builder.Services.AddHttpClient<ICommitService, CommitService>();
+builder.Services.AddSingleton<CommitService>();
 builder.Services.AddScoped<IListCommitsViewModel, ListCommitsViewModel>();
 
 var app = builder.Build();
