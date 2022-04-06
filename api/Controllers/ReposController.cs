@@ -50,23 +50,21 @@ public class ReposController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post(GitRepoCreateDto repo)
     {
+        // Create Repo
         var gitRepository = await _gitRepoService.Create(repo.Adapt<GitRepo>());
-        return Created($"/repos/${gitRepository.Id}", gitRepository);
-    }
 
-    [HttpPost("{id:int}/parse")]
-    public async Task<IActionResult> Parse(int id, [FromBody] Uri location)
-    {
-        var parsedCommits = await _parser.Parse(location);
+        // Parse all commits
+        var parsedCommits = await _parser.Parse(new Uri(repo.Url));
         var adaptedCommits = parsedCommits.Adapt<List<GitCommit>>();
-        adaptedCommits.ForEach(item => item.GitRepoId = id);
+        adaptedCommits.ForEach(item => item.GitRepoId = gitRepository.Id);
 
         foreach (var commit in parsedCommits.Where(a => a.Hash.Equals("off")))
         {
             Log.Information("{@Commit}", commit);
         }
         await _gitCommitService.Create(adaptedCommits);
-        return Ok();
+
+        return Created($"/repos/${gitRepository.Id}", gitRepository);
     }
 
     [HttpPut("{id:int}")]
