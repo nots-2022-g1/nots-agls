@@ -57,11 +57,7 @@ public class ReposController : ControllerBase
         var parsedCommits = await _parser.Parse(new Uri(repo.Url));
         var adaptedCommits = parsedCommits.Adapt<List<GitCommit>>();
         adaptedCommits.ForEach(item => item.GitRepoId = gitRepository.Id);
-
-        foreach (var commit in parsedCommits.Where(a => a.Hash.Equals("off")))
-        {
-            Log.Information("{@Commit}", commit);
-        }
+        
         await _gitCommitService.Create(adaptedCommits);
 
         return Created($"/repos/${gitRepository.Id}", gitRepository);
