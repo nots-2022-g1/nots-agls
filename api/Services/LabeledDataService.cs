@@ -44,4 +44,10 @@ public class LabeledDataService : ILabeledDataService
         _dataRepository.Remove(new LabeledData { Id = id });
         await _context.SaveChangesAsync();
     }
+
+    public async Task Add(IEnumerable<LabeledData> data)
+    {
+        _dataRepository.AddRange(data);
+        await _context.SaveChangesAsync();
+    }
 }
