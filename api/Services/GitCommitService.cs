@@ -14,7 +14,7 @@ public class GitCommitService : IGitCommitService
         _gitCommits = _context.Set<GitCommit>();
     }
 
-    public async Task<IList<GitCommit>> Get(int repoId)
+    public async Task<List<GitCommit>> Get(int repoId)
     {
         return await _gitCommits.Where(e => e.GitRepoId.Equals(repoId)).ToListAsync();
     }
@@ -24,7 +24,7 @@ public class GitCommitService : IGitCommitService
         throw new NotImplementedException();
     }
 
-    public async Task Create(IList<GitCommit> commits)
+    public async Task Create(IEnumerable<GitCommit> commits)
     {
         _gitCommits.AddRange(commits);
         await _context.SaveChangesAsync();
