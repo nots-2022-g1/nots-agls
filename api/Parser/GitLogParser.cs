@@ -37,8 +37,8 @@ public class GitLogParser
             git.StartInfo.RedirectStandardOutput = true;
             gitLog.Start();
             var gitlog = gitLog.WaitForExitAsync();
-            var pCommits = new List<Commit>();
-            Commit? pCommit = null;
+            var commits = new List<Commit>();
+            Commit? commit = null;
             while (!git.StandardOutput.EndOfStream)
             {
                 var line = await git.StandardOutput.ReadLineAsync() ?? string.Empty;
@@ -47,47 +47,41 @@ public class GitLogParser
                 {
                     //now we know a new commit starts
                     //read next lines until match again
-                    if (pCommit is not null)
+                    if (commit is not null)
                     {
-                        pCommits.Add(pCommit);
-                        pCommit = new Commit {Hash = line.Split(' ').LastOrDefault()};
+                        commits.Add(commit);
+                        commit = new Commit {Hash = line.Split(' ').LastOrDefault()};
                     }
                     else
                     {
-                        pCommit = new Commit {Hash = line.Split(' ').LastOrDefault()};
+                        commit = new Commit {Hash = line.Split(' ').LastOrDefault()};
                     }
                 }
                 else
                 {
                     if (line.Contains("Author: "))
                     {
-                        pCommit.Author = line.Split("Author: ", StringSplitOptions.RemoveEmptyEntries)
+                        commit.Author = line.Split("Author: ", StringSplitOptions.RemoveEmptyEntries)
                             .FirstOrDefault();
                     }
                     else if (line.Contains("Merge: "))
                     {
-                        pCommit.IsMerge = true;
+                        commit.IsMerge = true;
                     }
                     else if (line.Contains("Date: "))
                     {
-                        pCommit.Date =
+                        commit.Date =
                             DateTime.Parse(line.Split("Date: ", StringSplitOptions.RemoveEmptyEntries)
                                 .FirstOrDefault()).ToUniversalTime();
                     }
                     else
                     {
-                        pCommit.Message += $"{line?.ToLower().TrimStart().StripPunctuation()} ";
+                        commit.Message += $"{line?.ToLower().TrimStart().StripPunctuation()} ";
                     }
                 }
             }
-
             await gitlog;
-            // foreach (var commit in pCommits.Where(c => !c.IsMerge))
-            // { 
-            //     Log.Information("{@Commit}", commit);
-            // }
-
-            return pCommits.Where(c => !c.IsMerge).ToList();
+            return commits.Where(c => !c.IsMerge).ToList();
         }
         catch (Exception e)
         {

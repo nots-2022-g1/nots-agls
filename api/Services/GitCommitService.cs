@@ -14,7 +14,7 @@ public class GitCommitService : IGitCommitService
         _gitCommits = _context.Set<GitCommit>();
     }
 
-    public async Task<List<GitCommit>> Get(int repoId)
+    public async Task<IList<GitCommit>> Get(int repoId)
     {
         return await _gitCommits.Where(e => e.GitRepoId.Equals(repoId)).ToListAsync();
     }
