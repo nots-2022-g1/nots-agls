@@ -12,7 +12,6 @@ public class DatasetService : IDatasetService
 
     public DatasetService(IConfiguration config, HttpClient httpClient)
     {
-
         httpClient.BaseAddress = new Uri(config.GetSection("MyAppSettings").GetValue<string>("ApiUrl"));
         _client = RestService.For<IDatasetService>(httpClient, new RefitSettings());
     }
@@ -49,18 +48,19 @@ public class DatasetService : IDatasetService
         return await _client.Delete(id);
     }
 
-    public async Task<string> GenerateCsvAsync(int id)
+    public async Task<string> GenerateTsvAsync(int id)
     {
+        const char delimiter = '\t';
         var response = await _client.GetLabeledData(id);
-        
-        var columns = new List<string>() {"GitCommitMessage", "IsUseful", "MatchedOnKeyword"};
-        
-        var csvFile = string.Join(",", columns);
-        
+
+        var columns = new List<string> {"GitCommitMessage", "IsUseful", "MatchedOnKeyword"};
+
+        var csvFile = string.Join(delimiter, columns);
+
         foreach (var labeledData in response)
         {
             var csvRow = Environment.NewLine;
-            csvRow += $"{labeledData.GitCommit.Message},{labeledData.IsUseful},null";
+            csvRow += $"{labeledData.GitCommit.Message}{delimiter}{labeledData.IsUseful}{delimiter}null";
             csvFile += csvRow;
         }
 
