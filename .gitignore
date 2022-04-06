@@ -1,3 +1,4 @@
+# general
 obj
 bin
 .DS_Store
@@ -7,6 +8,8 @@ appsettings.Development.json
 .vscode 
 start-dev.sh
 .vs
+
+# frontend
 frontend/ca.crt
 frontend/ca.key
 frontend/ca.srl
@@ -16,3 +19,6 @@ frontend/localhost.csr
 frontend/localhost.key
 frontend/localhost.pfx
 frontend/appsettings.Local.json
+
+# api
+api/TrainedModels/
