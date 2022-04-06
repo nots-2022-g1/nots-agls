@@ -1,8 +1,10 @@
 using api.Model;
+using api.Parser;
 using api.Services;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Serilog;
 
 namespace api.Controllers;
 
@@ -18,10 +20,14 @@ public class RepoControllerAttribute : Attribute, IRouteTemplateProvider
 public class ReposController : ControllerBase
 {
     private readonly IGitRepoService _gitRepoService;
+    private readonly IGitCommitService _gitCommitService;
+    private readonly GitLogParser _parser;
 
-    public ReposController(IGitRepoService gitRepoService)
+    public ReposController(IGitRepoService gitRepoService, IGitCommitService gitCommitService)
     {
         _gitRepoService = gitRepoService;
+        _gitCommitService = gitCommitService;
+        _parser = new GitLogParser();
     }
 
     [HttpGet]
@@ -46,6 +52,21 @@ public class ReposController : ControllerBase
     {
         var gitRepository = await _gitRepoService.Create(repo.Adapt<GitRepo>());
         return Created($"/repos/${gitRepository.Id}", gitRepository);
+    }
+
+    [HttpPost("{id:int}/parse")]
+    public async Task<IActionResult> Parse(int id, [FromBody] Uri location)
+    {
+        var parsedCommits = await _parser.Parse(location);
+        var adaptedCommits = parsedCommits.Adapt<List<GitCommit>>();
+        adaptedCommits.ForEach(item => item.GitRepoId = id);
+
+        foreach (var commit in parsedCommits.Where(a => a.Hash.Equals("off")))
+        {
+            Log.Information("{@Commit}", commit);
+        }
+        await _gitCommitService.Create(adaptedCommits);
+        return Ok();
     }
 
     [HttpPut("{id:int}")]
