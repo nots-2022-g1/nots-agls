@@ -24,7 +24,7 @@ public class GitCommitService : IGitCommitService
         throw new NotImplementedException();
     }
 
-    public async Task Create(IList<GitCommit> commits)
+    public async Task Create(IEnumerable<GitCommit> commits)
     {
         _gitCommits.AddRange(commits);
         await _context.SaveChangesAsync();

@@ -91,9 +91,9 @@
 
     private async void handleExport(int id)
     {
-        var csv = await DatasetService.GenerateCsvAsync(id);
+        var tsv = await DatasetService.GenerateTsvAsync(id);
         var date = DateTime.Now.ToString("dd-MM-yyyy");
-        await BlazorDownloadFileService.DownloadFileFromText($"export_dataset{id}_{date}.csv", csv, Encoding.ASCII, "text/csv");
+        await BlazorDownloadFileService.DownloadFileFromText($"export_dataset{id}_{date}.tsv", tsv, Encoding.ASCII, "text/tsv");
     }
 
     protected override async Task OnInitializedAsync()

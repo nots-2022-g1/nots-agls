@@ -1,7 +1,7 @@
-using frontend.ViewModels;
+using frontend.ViewModels.KeywordSets;
 using Microsoft.AspNetCore.Components;
 
-namespace frontend.Pages;
+namespace frontend.Pages.KeywordSets;
 
 public class BaseKeywordSetDetailView : ComponentBase
 {

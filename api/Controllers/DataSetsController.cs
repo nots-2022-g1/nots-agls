@@ -1,3 +1,4 @@
+using System.Net;
 using api.Model;
 using api.Services;
 using Mapster;
@@ -17,12 +18,20 @@ public class DataSetControllerAttribute : Attribute, IRouteTemplateProvider
 [Route("[controller]")]
 public class DataSetsController : GenericCrudController<Dataset, DataSetDto>
 {
-    private readonly ILabeledDataService _dataService;
+    private readonly ILabeledDataService _labeledDataService;
+    private readonly IGitCommitService _gitCommitService;
+    private readonly IKeywordService _keywordService;
 
-    public DataSetsController(IGenericCrudService<Dataset> service, ILabeledDataService dataService) :
-        base(service)
+    public DataSetsController(
+        IGenericCrudService<Dataset> service,
+        ILabeledDataService labeledDataService,
+        IGitCommitService gitCommitService,
+        IKeywordService keywordService
+    ) : base(service)
     {
-        _dataService = dataService;
+        _labeledDataService = labeledDataService;
+        _gitCommitService = gitCommitService;
+        _keywordService = keywordService;
     }
 
     public override async Task<IActionResult> Post(DataSetDto dto)
@@ -41,6 +50,33 @@ public class DataSetsController : GenericCrudController<Dataset, DataSetDto>
         return Ok(modified);
     }
 
-    
+    [HttpPost("autolabel")]
+    public async Task<IActionResult> AutoLabel(AutoLabelConfig config)
+    {
+        var commits = await _gitCommitService.Get(config.GitRepoId);
+        var keywords = await _keywordService.GetByKeywordSetId(config.KeywordSetId);
+        var autoLabeledData = new List<LabeledData>();
 
+        foreach (var commit in commits)
+        {
+            var labeledData = new LabeledData
+            {
+                GitCommitHash = commit.Hash,
+                DatasetId = config.DatasetId,
+                IsUseful = false
+            };
+            foreach (var keyword in keywords)
+            {
+                if (commit.Message.Contains(keyword.Name))
+                {
+                    labeledData.IsUseful = true;
+                }
+            }
+
+            autoLabeledData.Add(labeledData);
+        }
+
+        await _labeledDataService.Add(autoLabeledData);
+        return Ok();
+    }
 }
