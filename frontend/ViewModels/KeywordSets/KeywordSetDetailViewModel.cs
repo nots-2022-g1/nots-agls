@@ -1,7 +1,7 @@
 using frontend.Models;
 using frontend.Services;
 
-namespace frontend.ViewModels;
+namespace frontend.ViewModels.KeywordSets;
 
 public interface IKeywordSetDetailViewModel
 {
