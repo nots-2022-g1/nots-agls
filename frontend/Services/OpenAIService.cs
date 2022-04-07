@@ -16,12 +16,12 @@ public class OpenAIService : IOpenAIService
         _client = RestService.For<IOpenAIService>(httpClient, new RefitSettings());
     }
 
-    public async Task<OpenAI> extractReasons(OpenAIExtractDTO extractDTO)
+    public async Task<ApiResponse<OpenAI>> extractReasons(OpenAIExtractDTO extractDTO)
     {
         return await _client.extractReasons(extractDTO);
     }
 
-    public async Task<OpenAI> summarizeText(OpenAISummarizeDTO summarizeDTO)
+    public async Task<ApiResponse<OpenAI>> summarizeText(OpenAISummarizeDTO summarizeDTO)
     {
         return await _client.summarizeText(summarizeDTO);
     }

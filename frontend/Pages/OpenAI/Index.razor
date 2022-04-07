@@ -32,14 +32,25 @@
     <h5 class="card-header text-white bg-secondary">Text extraction</h5>
     <div class="card-body">
         <p>Extract the reasons of the changes made in given commit.</p>
-        <button @onclick="handleTextExtraction" type="button" class="btn btn-secondary">Extract text</button>
-        <hr />
-        @if (extractionInProgress)
+
+        @if (extractionError != null)
         {
-            <div class="spinner-border d-block" role="status">
-                <span class="visually-hidden">Loading...</span>
+            <div class="alert alert-danger p-2" role="alert">
+                <span class="oi oi-warning"></span> @extractionError
             </div>
         }
+
+        <button @onclick="handleTextExtraction" type="button" class="btn btn-primary">
+            Extract reasons
+            @if (extractionInProgress)
+            {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <span class="visually-hidden">Loading...</span>
+            }
+        </button>
+
+        <hr />
+
         @if (extractionResult != null)
         {
             <label class="fw-bold">Result</label>
@@ -52,14 +63,25 @@
     <h5 class="card-header text-white bg-secondary">Text summarization</h5>
     <div class="card-body">
         <p>Make a summary of the commit message containing key elements.</p>
-        <button @onclick="handleTextSummarization" type="button" class="btn btn-secondary">Summarize text</button>
-        <hr />
-        @if (summarizationInProgress)
+
+        @if (summarizationError != null)
         {
-            <div class="spinner-border d-block" role="status">
-                <span class="visually-hidden">Loading...</span>
+            <div class="alert alert-danger p-2" role="alert">
+                <span class="oi oi-warning"></span> @summarizationError
             </div>
         }
+
+        <button @onclick="handleTextSummarization" type="button" class="btn btn-primary">
+            Summarize commit
+            @if (summarizationInProgress)
+            {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <span class="visually-hidden">Loading...</span>
+            }
+        </button>
+
+        <hr />
+
         @if (summarizationResult != null)
         {
             <label class="fw-bold">Result</label>
@@ -71,36 +93,71 @@
 @code
 {
     private string? gitCommitMessage { get; set; }
+
     private string? extractionResult { get; set; }
     private bool extractionInProgress { get; set; }
+    private string? extractionError { get; set; }
+
     private string? summarizationResult { get; set; }
     private bool summarizationInProgress { get; set; }
-
+    private string? summarizationError { get; set; }
 
     private async void handleTextExtraction()
     {
+        if (gitCommitMessage == null || gitCommitMessage.Length < 1) {
+            extractionError = "Please paste a commit message.";
+            return;
+        }
+
         extractionInProgress = true;
         StateHasChanged();
 
         var dto = new OpenAIExtractDTO();
         dto.prompt = gitCommitMessage;
 
-        var result = await OpenAIService.extractReasons(dto);
-        extractionResult = result.choices[0].text;
+        var response = await OpenAIService.extractReasons(dto);
+
+        if (((int)response.StatusCode) == 200)
+        {
+            extractionResult = response.Content.choices[0].text;
+            StateHasChanged();
+        }
+        else
+        {
+            extractionError = "Error extracting reasons!";
+            StateHasChanged();
+        }
+
         extractionInProgress = false;
         StateHasChanged();
     }
 
     private async void handleTextSummarization()
     {
+        if(gitCommitMessage == null || gitCommitMessage.Length < 1) {
+            summarizationError = "Please paste a commit message.";
+            return;
+        }
+
         summarizationInProgress = true;
         StateHasChanged();
 
         var dto = new OpenAISummarizeDTO();
         dto.prompt = gitCommitMessage;
 
-        var result = await OpenAIService.summarizeText(dto);
-        summarizationResult = result.choices[0].text;
+        var response = await OpenAIService.summarizeText(dto);
+
+        if (((int)response.StatusCode) == 200)
+        {
+            summarizationResult = response.Content.choices[0].text;
+            StateHasChanged();
+        }
+        else
+        {
+            summarizationError = "Error extracting reasons!";
+            StateHasChanged();
+        }
+
         summarizationInProgress = false;
         StateHasChanged();
     }

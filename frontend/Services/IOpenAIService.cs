@@ -7,8 +7,8 @@ namespace frontend.Services;
 public interface IOpenAIService
 {
     [Post("/engines/text-davinci-002/completions")]
-    Task<OpenAI> extractReasons(OpenAIExtractDTO extractDTO);
+    Task<ApiResponse<OpenAI>> extractReasons(OpenAIExtractDTO extractDTO);
 
     [Post("/engines/text-davinci-002/completions")]
-    Task<OpenAI> summarizeText(OpenAISummarizeDTO summarizeDTO);
+    Task<ApiResponse<OpenAI>> summarizeText(OpenAISummarizeDTO summarizeDTO);
 }
