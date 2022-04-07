@@ -13,7 +13,7 @@ public class GitLogParser
         _directory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
     }
 
-    public async Task<List<Commit>> Parse(Uri location)
+    public async Task<List<Commit>> Parse(Uri location, bool punctuation = false)
     {
         try
         {
@@ -76,7 +76,11 @@ public class GitLogParser
                     }
                     else
                     {
-                        commit.Message += $"{line?.ToLower().TrimStart().StripPunctuation()} ";
+                        var message = line?.ToLower().TrimStart();
+                        if (punctuation == true) {
+                            message = message.StripPunctuation();
+                        }
+                        commit.Message += message;
                     }
                 }
             }
