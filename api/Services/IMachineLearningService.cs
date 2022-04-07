@@ -1,7 +1,10 @@
-﻿namespace api.Services;
+﻿using api.TrainingData;
+
+namespace api.Services;
 
 public interface IMachineLearningService
 {
-    public bool LoadAndTrainDataset(bool saveToFile = false);
-    public string PredictClassification(string commitMessage);
+    public string LoadTrainingData(string fileName, byte[] fileContent);
+    public bool TrainModel(string fileId, AvailableTrainingSet trainingSet);
+    public string Predict(string fileId, AvailableTrainingSet trainingSet, string value);
 }

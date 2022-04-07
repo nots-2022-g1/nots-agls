@@ -46,6 +46,9 @@ builder.Services.AddScoped<IEditRepositoryViewModel, EditRepositoryViewModel>();
 builder.Services.AddHttpClient<ICommitService, CommitService>();
 builder.Services.AddSingleton<CommitService>();
 builder.Services.AddScoped<IListCommitsViewModel, ListCommitsViewModel>();
+// -- Machine Learning
+builder.Services.AddHttpClient<IMachineLearningService, MachineLearningService>();
+builder.Services.AddSingleton<MachineLearningService>();
 
 var app = builder.Build();
 

@@ -21,4 +21,11 @@ frontend/localhost.pfx
 frontend/appsettings.Local.json
 
 # api
-api/TrainedModels/
+# -- keep directory for upload cache
+!api/TrainingData/UploadCache/
+api/TrainingData/UploadCache/*
+!api/TrainingData/UploadCache/.gitkeep
+# -- keep directory for model cache
+!api/TrainingData/ModelCache/
+api/TrainingData/ModelCache/*
+!api/TrainingData/ModelCache/.gitkeep

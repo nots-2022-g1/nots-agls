@@ -1,0 +1,210 @@
+﻿@page "/machine-learning"
+
+<PageTitle>Machine Learning | AGLS</PageTitle>
+
+@inject IMachineLearningService _machineLearningService;
+@inject IHttpClientFactory _clientFactory
+@inject IWebHostEnvironment _environment;
+
+<div class="row my-3">
+    <nav aria-label="breadcrumb" class="d-flex flex-row justify-content-between align-items-center">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <a href="/">Home</a>
+            </li>
+            <li class="breadcrumb-item" aria-current="page">ML.NET</li>
+        </ol>
+        @* <a href="/datasets/create" class="btn btn-sm btn-primary py-1 btn-lg fw-bold"> *@
+        @*     NEW <span class="oi oi-plus ps-1"></span> *@
+        @* </a> *@
+    </nav>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3>Upload model</h3>
+                    <div class="mb-3">
+                        <label class="form-label" for="trainingDataFile">Upload TrainingData (.tsv)</label>
+                        <InputFile type="file" class="form-control" id="trainingDataFile" accept=".tsv" OnChange="@LoadFile"/>
+                    </div>
+                    <button class="btn btn-primary w-100" disabled="@(_fileName == null || _loading)" onclick="@UploadFile">Upload</button>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3>Model data</h3>
+                    @if (_modelId != null && _fileName != null)
+                    {
+                        <div>
+                            <p>
+                                <span class="fw-bold">File Name:</span> @_fileName
+                            </p>
+                            <p class="mb-0">
+                                <span class="fw-bold">Model Id:</span> @_modelId
+                            </p>
+                            <p class="small fst-italic">The "Model Id" is a unique identifier which can be used to interact with your model at any given time, store it somewhere you can remember.</p>
+                            <p>
+                                <span class="fw-bold">Training Successful:</span> @(_trainingSuccess ? "Yes" : "No")
+                            </p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="h-100 d-flex justify-content-center align-items-center">
+                            <p class="opacity-50 fst-italic mb-0">Please upload a training set</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3>Train model</h3>
+                    <div class="mb-3">
+                        <label class="form-label" for="modelIdTrain">Model Id</label>
+                        <input type="text" class="form-control" id="modelIdTrain" @bind="_requestModelId"/>
+                    </div>
+                    <div class="d-grid">
+                        <button class="btn btn-primary btn-sm" disabled="@(_requestModelId == null || _loading)" onclick="@Train">Train</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3>Predict from model</h3>
+                    <div class="mb-3">
+                        <label class="form-label" for="modelIdPredict">Model Id</label>
+                        <input type="text" class="form-control" id="modelIdPredict" @bind="_requestModelId"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="requestMessage">Request</label>
+                        <input type="text" class="form-control" id="requestMessage" @bind="_requestPrediction"/>
+                    </div>
+                    <div class="d-grid">
+                        <button class="btn btn-primary btn-sm" disabled="@(_requestModelId == null || _loading || _requestPrediction == null)" onclick="@Predict">Predict</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Prediction history</h3>
+                    <div class="border-bottom border-1 border-secondary mb-5"></div>
+                    @foreach (var prediction in _predictions.AsEnumerable().Reverse())
+                    {
+                        <p>@prediction</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private bool _loading { get; set; }
+    private string _fileName { get; set; } = default!;
+    private byte[] _file { get; set; } = default!;
+
+    private string _modelId { get; set; }
+    private string _requestModelId { get; set; }
+
+    private bool _trainingSuccess { get; set; }
+
+    private string _prediction { get; set; }
+    private string _requestPrediction { get; set; }
+
+    private List<string> _predictions = new();
+
+    private async Task LoadFile(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            _loading = true;
+            var ms = new MemoryStream();
+            await e.File.OpenReadStream(50000000L).CopyToAsync(ms);
+            _fileName = e.File.Name;
+            _file = ms.ToArray();
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task UploadFile()
+    {
+        try
+        {
+            _loading = true;
+            var dto = new UploadTrainingDataDto
+            {
+                FileName = _fileName,
+                FileContent = _file
+            };
+            var response = await _machineLearningService.UploadTrainingData(dto);
+            if (response.Content != null) _modelId = response.Content;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task Train()
+    {
+        try
+        {
+            _loading = true;
+            var dto = new TrainModelDto
+            {
+                FileId = _modelId,
+                TrainingSet = 0,
+            };
+            var response = await _machineLearningService.TrainModel(dto);
+            _trainingSuccess = response.Content;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task Predict()
+    {
+        try
+        {
+            _loading = true;
+            var dto = new PredictDto
+            {
+                FileId = _modelId,
+                TrainingSet = 0,
+                Value = _requestPrediction
+            };
+            var response = await _machineLearningService.Predict(dto);
+            if (response.Content != null)
+            {
+                _prediction = response.Content;
+                _predictions.Add(_prediction);
+            }
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+}

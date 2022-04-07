@@ -1,5 +1,6 @@
 ﻿using api.Datasets.Models;
 using api.Model;
+using api.TrainingData;
 using Microsoft.ML;
 
 namespace api.Services;
@@ -9,28 +10,64 @@ public class MachineLearningService : IMachineLearningService
     private readonly ApplicationContext _context;
 
     private static string? AppPath => Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
-    private static string TrainDataPath => Path.Combine(AppPath!, "..", "..", "..", "Datasets", "training_angular-commits.tsv");
-    private static string ModelPath => Path.Combine(AppPath!, "..", "..", "..", "TrainedModels", "angular-model.zip");
 
-    private static MLContext? _mlContext;
-    private static PredictionEngine<CommitClassification, CommitClassificationPrediction> _predictionEngine;
-    private static ITransformer _trainedModel;
-    private static IDataView _trainingDataView;
+    private readonly MLContext? _mlContext;
+    private PredictionEngine<CommitClassification, CommitClassificationPrediction> _predictionEngine;
 
     public MachineLearningService(ApplicationContext context)
     {
         _context = context;
         _mlContext = new MLContext(0);
-        _trainingDataView = _mlContext.Data.LoadFromTextFile<CommitClassification>(TrainDataPath, hasHeader: true);
     }
 
-    public bool LoadAndTrainDataset(bool saveToFile = false)
+    private string GetTrainingDataUploadCachePath(string fileId)
     {
-        if (File.Exists(ModelPath))
+        return Path.Combine(AppPath!, "..", "..", "..", "TrainingData", "UploadCache", $"{fileId}.tsv");
+    }
+
+    private string GetTrainedDataModelCachePath(string fileId)
+    {
+        return Path.Combine(AppPath!, "..", "..", "..", "TrainingData", "ModelCache", $"{fileId}.zip");
+    }
+
+    public string LoadTrainingData(string fileName, byte[] fileContent)
+    {
+        if (!fileName.EndsWith(".tsv")) throw new ArgumentException("Invalid file type/extension, expected '.tsv'");
+        var fileId = Guid.NewGuid().ToString("N");
+        using var fs = new FileStream(GetTrainingDataUploadCachePath(fileId), FileMode.Create, FileAccess.Write);
+        fs.Write(fileContent, 0, fileContent.Length);
+        return fileId;
+    }
+
+    public bool TrainModel(string fileId, AvailableTrainingSet trainingSet)
+    {
+        if (File.Exists(GetTrainedDataModelCachePath(fileId))) return false;
+
+        return trainingSet switch
         {
-            return false;
-        }
-        
+            AvailableTrainingSet.AngularClassification => TrainAngularClassificationStrategy(fileId),
+            _ => throw new NotImplementedException()
+        };
+    }
+
+    public string Predict(string fileId, AvailableTrainingSet trainingSet, string value)
+    {
+        if (!File.Exists(GetTrainedDataModelCachePath(fileId))) throw new Exception("Model does not exist");
+
+        return trainingSet switch
+        {
+            AvailableTrainingSet.AngularClassification => PredictAngularClassificationStrategy(fileId, value),
+            _ => throw new NotImplementedException()
+        };
+    }
+
+    private bool TrainAngularClassificationStrategy(string fileId)
+    {
+        var trainingData = _mlContext!.Data.LoadFromTextFile<CommitClassification>(
+            GetTrainingDataUploadCachePath(fileId),
+            hasHeader: true
+        );
+
         var pipeline = _mlContext!.Transforms.Conversion
             .MapValueToKey(inputColumnName: "Classification", outputColumnName: "Label")
             .Append(_mlContext.Transforms.Text.FeaturizeText(inputColumnName: "CommitMessage",
@@ -42,25 +79,22 @@ public class MachineLearningService : IMachineLearningService
             .Append(_mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy())
             .Append(_mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel"));
 
-        _trainedModel = trainingPipeline.Fit(_trainingDataView);
+        var trainedModel = trainingPipeline.Fit(trainingData);
         _predictionEngine = _mlContext.Model
-            .CreatePredictionEngine<CommitClassification, CommitClassificationPrediction>(_trainedModel);
+            .CreatePredictionEngine<CommitClassification, CommitClassificationPrediction>(trainedModel);
 
-        if (saveToFile)
-        {
-            _mlContext.Model.Save(_trainedModel, _trainingDataView.Schema, ModelPath);
-        }
+        _mlContext.Model.Save(trainedModel, trainingData.Schema, GetTrainedDataModelCachePath(fileId));
 
         return true;
     }
 
-    public string PredictClassification(string commitMessage)
+    private string PredictAngularClassificationStrategy(string fileId, string request)
     {
-        ITransformer loadedModel = _mlContext.Model.Load(ModelPath, out _);
+        var loadedModel = _mlContext!.Model.Load(GetTrainedDataModelCachePath(fileId), out _);
 
-        CommitClassification classification = new CommitClassification
+        var classification = new CommitClassification
         {
-            CommitMessage = commitMessage
+            CommitMessage = request
         };
 
         _predictionEngine = _mlContext.Model

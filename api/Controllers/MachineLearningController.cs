@@ -1,4 +1,5 @@
-﻿using api.Model;
+﻿using System.Diagnostics;
+using api.Model;
 using api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,22 +16,25 @@ public class MachineLearningController : ControllerBase
         _machineLearningService = machineLearningService;
     }
 
-    [HttpPost("/loadDataset")]
-    public Task<IActionResult> LoadDataset(LoadDatasetDto dto)
+    [HttpPost("loadTrainingData")]
+    public Task<IActionResult> LoadTrainingData(LoadTrainingDataDto dto)
     {
-        var trained = _machineLearningService.LoadAndTrainDataset(dto.SaveToFile);
-        var result = Ok(trained
-            ? "Dataset has been loaded and trained successfully"
-            : "This dataset was already used to train this model"
-        );
-        return Task.FromResult<IActionResult>(result);
+        var fileId = _machineLearningService.LoadTrainingData(dto.FileName, dto.FileContent);
+        return Task.FromResult<IActionResult>(Ok(fileId));
     }
 
-    [HttpPost("/classify")]
-    public Task<IActionResult> ClassifyCommit(ClassifyDto dto)
+    [HttpPost("trainModel")]
+    public Task<IActionResult> TrainModel(TrainModelDto dto)
     {
-        var response = _machineLearningService.PredictClassification(dto.Message);
-        var result = Ok(response);
-        return Task.FromResult<IActionResult>(result);
+        var success = _machineLearningService.TrainModel(dto.FileId, dto.TrainingSet);
+        return Task.FromResult<IActionResult>(Ok(success));
     }
+
+    [HttpPost("predict")]
+    public Task<IActionResult> Predict(PredictDto dto)
+    {
+        var response = _machineLearningService.Predict(dto.FileId, dto.TrainingSet, dto.Value);
+        return Task.FromResult<IActionResult>(Ok(response));
+    }
+    
 }
