@@ -13,11 +13,31 @@ public class Choice
     public string finish_reason { get; set; }
 }
 
+public class OpenAIExtractDTO
+{
+    private string _prompt;
+    public string prompt
+    {
+        get => _prompt;
+        set => _prompt = $"the following text describes a change, extract why the change was made. \n {value}";
+    }
+    public double temperature { get; set; } = 0.7;
+    public int max_tokens { get; set; } = 120;
+    public double top_p { get; set; } = 1.0;
+    public double frequency_penalty { get; set; } = 0.0;
+    public double presence_penalty { get; set; } = 0.0;
+}
+
 public class OpenAISummarizeDTO
 {
-    public string prompt { get; set; }
+    private string _prompt;
+    public string prompt
+    {
+        get => _prompt;
+        set => _prompt = $"{value} tl;dr";
+    }
     public double temperature { get; set; } = 0.7;
-    public int max_tokens { get; set; } = 60;
+    public int max_tokens { get; set; } = 120;
     public double top_p { get; set; } = 1.0;
     public double frequency_penalty { get; set; } = 0.0;
     public double presence_penalty { get; set; } = 0.0;

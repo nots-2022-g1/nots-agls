@@ -67,10 +67,9 @@ public class DataSetsController : GenericCrudController<Dataset, DataSetDto>
             };
             foreach (var keyword in keywords)
             {
-                if (commit.Message.Contains(keyword.Name))
-                {
-                    labeledData.IsUseful = true;
-                }
+                if (!commit.Message.Contains(keyword.Name)) continue;
+                labeledData.IsUseful = true;
+                labeledData.MatchedOnKeyword = keyword.Name;
             }
 
             autoLabeledData.Add(labeledData);
