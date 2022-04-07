@@ -8,6 +8,7 @@ public class LabeledData
     public int Id { get; set; }
     public bool IsUseful { get; set; }
     public string GitCommitHash { get; set; }
+    public string? MatchedOnKeyword { get; set; }
     public int DatasetId { get; set; }
     public virtual GitCommit GitCommit { get; set; }
     public virtual Dataset Dataset { get; set; }
