@@ -60,7 +60,7 @@ public class DatasetService : IDatasetService
         foreach (var labeledData in response)
         {
             var csvRow = Environment.NewLine;
-            csvRow += $"{labeledData.GitCommit.Message}{delimiter}{labeledData.IsUseful}{delimiter}null";
+            csvRow += $"{labeledData.GitCommit.Message}{delimiter}{labeledData.IsUseful}{delimiter}{labeledData.MatchedOnKeyword}";
             csvFile += csvRow;
         }
 
