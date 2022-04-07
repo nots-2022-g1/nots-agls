@@ -46,6 +46,7 @@ builder.Services.AddScoped<IEditRepositoryViewModel, EditRepositoryViewModel>();
 builder.Services.AddHttpClient<ICommitService, CommitService>();
 builder.Services.AddSingleton<CommitService>();
 builder.Services.AddScoped<IListCommitsViewModel, ListCommitsViewModel>();
+builder.Services.AddSingleton<CommitService>();
 
 var app = builder.Build();
 
