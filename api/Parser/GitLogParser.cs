@@ -13,7 +13,7 @@ public class GitLogParser
         _directory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
     }
 
-    public async Task<List<Commit>> Parse(Uri location, bool punctuation = false)
+    public async Task<List<GitLogCommit>> Parse(Uri location, bool punctuation = false)
     {
         try
         {
@@ -37,8 +37,8 @@ public class GitLogParser
             git.StartInfo.RedirectStandardOutput = true;
             gitLog.Start();
             var gitlog = gitLog.WaitForExitAsync();
-            var commits = new List<Commit>();
-            Commit? commit = null;
+            var commits = new List<GitLogCommit>();
+            GitLogCommit? commit = null;
             while (!git.StandardOutput.EndOfStream)
             {
                 var line = await git.StandardOutput.ReadLineAsync() ?? string.Empty;
@@ -50,11 +50,11 @@ public class GitLogParser
                     if (commit is not null)
                     {
                         commits.Add(commit);
-                        commit = new Commit {Hash = line.Split(' ').LastOrDefault()};
+                        commit = new GitLogCommit {Hash = line.Split(' ').LastOrDefault()};
                     }
                     else
                     {
-                        commit = new Commit {Hash = line.Split(' ').LastOrDefault()};
+                        commit = new GitLogCommit {Hash = line.Split(' ').LastOrDefault()};
                     }
                 }
                 else

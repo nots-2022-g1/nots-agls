@@ -1,6 +1,6 @@
 namespace api.Parser;
 
-public class Commit
+public class GitLogCommit
 {
     public string? Hash { get; set; }
     public string? Author { get; set; }
