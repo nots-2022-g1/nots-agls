@@ -66,4 +66,9 @@ public class DatasetService : IDatasetService
 
         return csvFile;
     }
+
+    public Task AutoLabel(AutoLabelConfig config)
+    {
+        return _client.AutoLabel(config);
+    }
 }
