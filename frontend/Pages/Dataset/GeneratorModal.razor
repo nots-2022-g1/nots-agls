@@ -14,7 +14,8 @@
 
             <div class="col">
                 <label for="selectRepository" class="form-label">Repository</label>
-                <select name="repository" @bind="_config.GitRepoId" class="btn btn-outline-secondary w-100" id="selectRepository">
+                <select name="repository" @bind="_config.GitRepoId" class="btn btn-outline-secondary w-100"
+                    id="selectRepository">
                     @if (gitRepositories == null || gitRepositories.Count < 1)
                     {
                         <option value="" disabled selected>No repositories available</option>
@@ -31,7 +32,8 @@
 
             <div class="col">
                 <label for="selectKeywordSet" class="form-label">Keyword set</label>
-                <select name="keywordSet" @bind="_config.KeywordSetId" class="btn btn-outline-secondary w-100" id="selectKeywordSet">
+                <select name="keywordSet" @bind="_config.KeywordSetId" class="btn btn-outline-secondary w-100"
+                    id="selectKeywordSet">
                     @if (keywordSets == null || keywordSets.Count < 1)
                     {
                         <option value="" disabled selected>No keywords sets available</option>
@@ -49,30 +51,29 @@
     </Body>
 
     <Footer>
-        <button type="button" @onclick="HandleGenerateData" class="btn btn-primary"><span class="oi oi-audio-spectrum me-1"></span> Generate</button>
+        <button type="button" @onclick="HandleGenerateData" class="btn btn-primary"><span
+                class="oi oi-audio-spectrum me-1"></span> Generate</button>
     </Footer>
 </Modal>
 
 
 
 @code {
-    private Modal modal { get; set; }
-    
     [Parameter]
     public int Id { get; set; }
-    
+    private Modal modal { get; set; }
     public void Open()
     {
         modal.Open();
     }
 
     protected AutoLabelConfig _config { get; set; }
-    
+
     private List<Repository>? gitRepositories { get; set; }
     private List<KeywordSet>? keywordSets { get; set; }
     protected override async Task OnInitializedAsync()
     {
-        _config = new AutoLabelConfig {DatasetId = Id};
+        _config = new AutoLabelConfig { DatasetId = Id };
         gitRepositories = await _repositoryService.Get();
         keywordSets = await _keywordService.Get(); // TODO: Replace with KeywordSetService!
     }
