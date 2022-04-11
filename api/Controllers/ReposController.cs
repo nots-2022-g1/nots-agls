@@ -20,14 +20,16 @@ public class RepoControllerAttribute : Attribute, IRouteTemplateProvider
 public class ReposController : ControllerBase
 {
     private readonly IGitRepoService _gitRepoService;
+    private readonly IGitService _gitService;
     private readonly IGitCommitService _gitCommitService;
     private readonly GitLogParser _parser;
 
-    public ReposController(IGitRepoService gitRepoService, IGitCommitService gitCommitService)
+    public ReposController(IGitRepoService gitRepoService, IGitCommitService gitCommitService, GitLogParser parser, IGitService gitService)
     {
         _gitRepoService = gitRepoService;
         _gitCommitService = gitCommitService;
-        _parser = new GitLogParser();
+        _parser = parser;
+        _gitService = gitService;
     }
 
     [HttpGet]
@@ -52,11 +54,11 @@ public class ReposController : ControllerBase
     {
         var gitRepository = await _gitRepoService.Create(repo.Adapt<GitRepo>());
 
-        var parsedCommits = await _parser.Parse(new Uri(repo.Url));
-        var adaptedCommits = parsedCommits.Adapt<List<GitCommit>>();
-        adaptedCommits.ForEach(item => item.GitRepoId = gitRepository.Id);
+        var gitlog = await _gitService.Log(gitRepository);
+
+        var commits = await _parser.Parse(gitRepository, gitlog);
         
-        await _gitCommitService.Create(adaptedCommits);
+        await _gitCommitService.Create(commits);
 
         return Created($"/repos/${gitRepository.Id}", gitRepository);
     }
