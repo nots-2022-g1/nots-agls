@@ -15,8 +15,14 @@ public class OpenAIService : IOpenAIService
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", config.GetSection("MyAppSettings").GetValue<string>("OpenAIKey"));
         _client = RestService.For<IOpenAIService>(httpClient, new RefitSettings());
     }
-    public async Task<OpenAI> getSummary(OpenAISummarizeDTO summarizeDTO)
+
+    public async Task<ApiResponse<OpenAI>> extractReasons(OpenAIExtractDTO extractDTO)
     {
-        return await _client.getSummary(summarizeDTO);        
+        return await _client.extractReasons(extractDTO);
+    }
+
+    public async Task<ApiResponse<OpenAI>> summarizeText(OpenAISummarizeDTO summarizeDTO)
+    {
+        return await _client.summarizeText(summarizeDTO);
     }
 }
