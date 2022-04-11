@@ -33,6 +33,7 @@ builder.Services.AddScoped<IGitCommitService, GitCommitService>();
 builder.Services.AddScoped(typeof(IGenericCrudService<>), typeof(GenericCrudService<>));
 builder.Services.AddScoped<ILabeledDataService, LabeledDataService>();
 builder.Services.AddScoped<IKeywordService, KeywordService>();
+builder.Services.AddScoped<IMachineLearningService, MachineLearningService>();
 
 TypeAdapterConfig.GlobalSettings.Default.NameMatchingStrategy(NameMatchingStrategy.Flexible);
 
