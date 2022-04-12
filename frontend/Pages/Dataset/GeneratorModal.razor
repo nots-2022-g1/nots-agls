@@ -74,8 +74,26 @@
     protected override async Task OnInitializedAsync()
     {
         _config = new AutoLabelConfig { DatasetId = Id };
+
         gitRepositories = await _repositoryService.Get();
+        if (gitRepositories == null || gitRepositories.Count < 1)
+        {
+            _config.GitRepoId = 0;
+        } 
+        else
+        {
+            _config.GitRepoId = gitRepositories.First().Id;
+        }
+
         keywordSets = await _keywordService.Get(); // TODO: Replace with KeywordSetService!
+        if (keywordSets == null || keywordSets.Count < 1)
+        {
+            _config.KeywordSetId = 0;
+        }
+        else
+        {
+            _config.KeywordSetId = keywordSets.First().Id;
+        }
     }
 
     protected async void HandleGenerateData()
