@@ -1,5 +1,7 @@
 # nots-agls
 
+[![.NET](https://github.com/nots-2022-g1/nots-agls/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/nots-2022-g1/nots-agls/actions/workflows/dotnet.yml) [![Docker](https://github.com/nots-2022-g1/nots-agls/actions/workflows/docker-publish.yml/badge.svg?branch=main)](https://github.com/nots-2022-g1/nots-agls/actions/workflows/docker-publish.yml)
+
 "Aggles" an Automated Git Labeling System. A system to bring order to the chaos of what is known as git commit messages. Using .NET 6 with Blazor & ASP.NET
 
 ## Technologies
