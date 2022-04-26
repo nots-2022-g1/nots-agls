@@ -1,0 +1,25 @@
+services:
+  database:
+    image: postgres:latest
+    restart: always
+    volumes:
+      - database:/var/lib/postgresql/data
+    env_file:
+      - .env
+    networks:
+      - default
+  api:
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - 7097:7097
+      - 5165:5165
+    env_file:
+      - .env
+    depends_on:
+      - database
+    networks:
+      - default
+
+volumes:
+  database: null
