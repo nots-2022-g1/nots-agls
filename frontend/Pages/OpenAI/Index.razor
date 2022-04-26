@@ -1,8 +1,11 @@
 @page "/openai"
+@using BlazorDownloadFile
+@using System.Text
 
 <PageTitle>OpenAI Sandbox | AGLS</PageTitle>
 
 @inject OpenAIService OpenAIService
+@inject IBlazorDownloadFileService BlazorDownloadFileService;
 
 <div class="row my-3">
     <nav aria-label="breadcrumb" class="d-flex flex-row justify-content-between align-items-center">
@@ -60,9 +63,9 @@
 </div>
 
 <div class="card mb-3">
-    <h5 class="card-header text-white bg-secondary">Design decisions summarizer</h5>
+    <h5 class="card-header text-white bg-secondary">Commit Message Dataset</h5>
     <div class="card-body">
-        <p>Upload a dataset which contains commit messages to extract the design decisions from them.</p>
+        <p>Upload a dataset which contains commit messages to execute instructions on them.</p>
 
         @if (fileError != null)
         {
@@ -72,15 +75,23 @@
         }
 
         <div class="mb-3">
-            <label class="form-label" for="trainingDataFile">Upload file (.tsv)</label>
-            <InputFile type="file" class="form-control" id="trainingDataFile" accept=".tsv" OnChange="@handleLoadFile"/>
+            <label class="form-label" for="designExtractorFile">Upload file (.tsv)</label>
+            <InputFile type="file" class="form-control" id="designExtractorFile" accept=".tsv" OnChange="@handleLoadFile"/>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" for="designExtractorCommand">Enter instructions</label>
+            <input type="text" class="form-control" id="designExtractorCommand" @bind="designDecisionCommand"/>
         </div>
 
         <div class="mb-3 flex flex-row gap-2">
             <button type="button" class="btn btn-primary" @onclick="handleGetReasonsFromTsv" disabled="@(fileName == null || loading)">
                 Extract reasons
             </button>
-            <button type="button" class="btn btn-danger" @onclick="handleStopExtracting" disabled="@(commitDesignDecisions == null || commitDesignDecisions.Count < 1 || stopExtracting)">
+            <button type="button" class="btn btn-secondary" @onclick="downloadTsvAsync" disabled="@(commitResponses == null || commitResponses.Count < 1 || !shouldStopExtracting || loading)">
+                Export CSV
+            </button>
+            <button type="button" class="btn btn-danger" @onclick="handleStopExtracting" disabled="@(commitResponses == null || commitResponses.Count < 1 || shouldStopExtracting)">
                 Stop extracting
             </button>
         </div>
@@ -90,20 +101,20 @@
         <table class="table">
             <thead>
             <tr>
-                <th>Id</th>
+                <th>Ref</th>
                 <th>Commit</th>
-                <th>Reasoning</th>
+                <th>Response</th>
             </tr>
             </thead>
             <tbody>
-            @if (commitDesignDecisions != null)
+            @if (commitResponses != null)
             {
-                @for (int i = 0; i < commitDesignDecisions.Count; i++)
+                @for (int i = 0; i < commitResponses.Count; i++)
                 {
                     <tr>
                         <td>@i</td>
-                        <td>@commitDesignDecisions[i].commit</td>
-                        <td>@commitDesignDecisions[i].summarization</td>
+                        <td>@commitResponses[i].commit</td>
+                        <td>@commitResponses[i].response</td>
                     </tr>
                 }
             }
@@ -157,14 +168,15 @@
 
     private bool loading { get; set; }
     private string? fileName { get; set; }
-    private List<string> tsvCommitMessages { get; set; }
-    private List<CommitSummarization> commitDesignDecisions { get; set; }
     private string? fileError { get; set; }
-    private bool stopExtracting { get; set; }
+    private string designDecisionCommand { get; set; } = "The following text describes a change, extract the reason for the change:";
+    private bool shouldStopExtracting { get; set; }
+    private List<string> tsvCommitMessages { get; set; }
+    private List<CommitResponse> commitResponses { get; set; }
 
     private async Task handleLoadFile(InputFileChangeEventArgs e)
     {
-        commitDesignDecisions = new List<CommitSummarization>();
+        commitResponses = new List<CommitResponse>();
         tsvCommitMessages = new List<string>();
         fileError = null;
         loading = true;
@@ -176,7 +188,7 @@
             var loopable = System.Text.Encoding.UTF8.GetString(ms.ToArray());
 
             var items = loopable.Split(Environment.NewLine);
-            for (int i = 0; i < items.Length; i++)
+            for (var i = 0; i < items.Length; i++)
             {
                 if (i == 0) continue;
                 var columnIndex = 0;
@@ -199,25 +211,25 @@
 
     private void handleStopExtracting()
     {
-        stopExtracting = true;
+        shouldStopExtracting = true;
     }
 
-    private async IAsyncEnumerable<CommitSummarization> getSummarizationsAsync()
+    private async IAsyncEnumerable<CommitResponse> getSummarizationsAsync()
     {
-        for (int i = 0; i < tsvCommitMessages.Count; i++)
+        for (var i = 0; i < tsvCommitMessages.Count; i++)
         {
-            if (stopExtracting) break;
-            var cs = new CommitSummarization();
+            if (shouldStopExtracting) break;
+            var cs = new CommitResponse();
             cs.commit = tsvCommitMessages[i];
             try
             {
                 var dto = new OpenAIExtractDTO();
-                dto.prompt = cs.commit;
+                dto.prompt = $"{designDecisionCommand} {cs.commit}";
                 var response = await OpenAIService.extractReasons(dto);
 
                 if ((int) response.StatusCode == 200)
                 {
-                    cs.summarization = response.Content.choices[0].text;
+                    cs.response = response.Content.choices[0].text;
                 }
                 else
                 {
@@ -226,7 +238,7 @@
             }
             catch
             {
-                cs.summarization = "";
+                cs.response = "";
             }
             yield return cs;
         }
@@ -234,16 +246,36 @@
 
     private async Task handleGetReasonsFromTsv()
     {
-        stopExtracting = false;
-        commitDesignDecisions = new List<CommitSummarization>();
+        shouldStopExtracting = false;
+        commitResponses = new List<CommitResponse>();
         fileError = null;
         loading = true;
         await foreach (var item in getSummarizationsAsync())
         {
-            commitDesignDecisions.Add(item);
+            commitResponses.Add(item);
             StateHasChanged();
         }
         loading = false;
+    }
+
+    public async Task downloadTsvAsync()
+    {
+        const char delimiter = '\t';
+
+        var columns = new List<string> {"Reference", "GitCommitMessage", "Response"};
+
+        var tsvFile = string.Join(delimiter, columns);
+
+        for (var i = 0; i < commitResponses.Count; i++)
+        {
+            var tsvRow = Environment.NewLine;
+            var cr = commitResponses[i];
+            tsvRow += $"{i}{delimiter}{cr.commit}{delimiter}{cr.response.Replace("\n", "")}";
+            tsvFile += tsvRow;
+        }
+
+        var date = DateTime.Now.ToString("dd-MM-yyyy");
+        await BlazorDownloadFileService.DownloadFileFromText($"export_openai_{date}.tsv", tsvFile, Encoding.ASCII, "text/tsv");
     }
 
     private async void handleTextExtraction()
@@ -258,7 +290,7 @@
         StateHasChanged();
 
         var dto = new OpenAIExtractDTO();
-        dto.prompt = gitCommitMessage;
+        dto.prompt = $"{designDecisionCommand} {gitCommitMessage}";
 
         var response = await OpenAIService.extractReasons(dto);
 
