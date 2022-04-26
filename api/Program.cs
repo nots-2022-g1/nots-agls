@@ -1,4 +1,5 @@
 using api.Model;
+using api.Parser;
 using api.Services;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,8 @@ builder.Services.AddScoped<IGitCommitService, GitCommitService>();
 builder.Services.AddScoped(typeof(IGenericCrudService<>), typeof(GenericCrudService<>));
 builder.Services.AddScoped<ILabeledDataService, LabeledDataService>();
 builder.Services.AddScoped<IKeywordService, KeywordService>();
+builder.Services.AddScoped<IGitService, GitService>();
+builder.Services.AddScoped<GitLogParser>();
 
 TypeAdapterConfig.GlobalSettings.Default.NameMatchingStrategy(NameMatchingStrategy.Flexible);
 
