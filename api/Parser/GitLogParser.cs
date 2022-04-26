@@ -1,7 +1,5 @@
-using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
 using api.Model;
-using api.Services;
 using Serilog;
 
 namespace api.Parser;
@@ -9,13 +7,11 @@ namespace api.Parser;
 public class GitLogParser
 {
     private readonly IConfiguration _config;
-    private readonly IGitService _gitService;
     private readonly string _directory;
 
-    public GitLogParser(IConfiguration config, IGitService gitService)
+    public GitLogParser(IConfiguration config)
     {
         _config = config;
-        _gitService = gitService;
         _directory = Path.Combine(Path.GetTempPath(), "gitlogparser");
     }
 
@@ -44,44 +40,37 @@ public class GitLogParser
      * the GitCommit.GitRepoId property. It uses a queue<Task> and Task.WhenAll to enable the workload
      * to be spread to multiple threads.
      */
-    public async Task<IEnumerable<GitCommit>> Parse(GitRepo repo, string input)
+    public static Task<IEnumerable<GitCommit>> Parse(GitRepo repo, string input)
     {
-        var commitStart = new Regex("^commit\\s[0-9a-f]{40}", RegexOptions.Compiled & RegexOptions.Multiline);
+        var commitStart = new Regex("^commit\\s", RegexOptions.Multiline | RegexOptions.Compiled);
         IEnumerable<string> commits = commitStart.Split(input);
-        var threadSafeGitCommits = new ConcurrentBag<GitCommit>();
-        var tasks = new Queue<Task>();
 
-        foreach (var commit in commits)
-        {
-            tasks.Enqueue(Task.Run(() =>
-                {
-                    threadSafeGitCommits.Add(new GitCommit
-                        {
-                            Hash = ParseHash(commit),
-                            Message = ParseMessage(input),
-                            GitRepoId = repo.Id
-                        }
-                    );
-                }
-            ));
-        }
+        ICollection<GitCommit> gitCommits = commits
+            .Where(c => !c.Equals(string.Empty))
+            .Where(c => !c.Contains("Merge", StringComparison.CurrentCultureIgnoreCase))
+            .Select(commit => new GitCommit
+            {
+                Hash = ParseHash(commit),
+                Message = ParseMessage(commit),
+                GitRepoId = repo.Id
+            }).ToList();
 
-        await Task.WhenAll(tasks);
-
-        return threadSafeGitCommits;
+        return Task.FromResult<IEnumerable<GitCommit>>(gitCommits);
     }
 
-    private string ParseHash(string input)
+    private static string ParseHash(string input)
     {
-        var commitHash = new Regex("^commit ([0-9a-f]{40})", RegexOptions.Compiled & RegexOptions.Multiline);
-        return commitHash.Match(input).Groups[1].Value;
+        var splitBySpace = input.Split('\n');
+        return splitBySpace.First();
+        // var commitHash = new Regex("^commit ([0-9a-f]{40})", RegexOptions.Compiled | RegexOptions.Multiline);
+        // return commitHash.Match(input).Groups[1].Value;
     }
 
-    private string ParseMessage(string input)
+    private static string ParseMessage(string input)
     {
-        var messageRegex = new Regex("\n{2}", RegexOptions.Compiled & RegexOptions.Multiline);
-        return messageRegex.Split(input)[1];
+        var splitByDoubleNewline = input.Split("\n\n");
+        // var messageRegex = new Regex("\n{2}", RegexOptions.Compiled | RegexOptions.Multiline);
+        // return messageRegex.Split(input)[1];
+        return splitByDoubleNewline[1].TrimStart();
     }
-
-   
 }

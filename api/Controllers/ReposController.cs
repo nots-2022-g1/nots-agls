@@ -24,7 +24,8 @@ public class ReposController : ControllerBase
     private readonly IGitCommitService _gitCommitService;
     private readonly GitLogParser _parser;
 
-    public ReposController(IGitRepoService gitRepoService, IGitCommitService gitCommitService, GitLogParser parser, IGitService gitService)
+    public ReposController(IGitRepoService gitRepoService, IGitCommitService gitCommitService, GitLogParser parser,
+        IGitService gitService)
     {
         _gitRepoService = gitRepoService;
         _gitCommitService = gitCommitService;
@@ -46,6 +47,7 @@ public class ReposController : ControllerBase
         {
             return NotFound();
         }
+
         return Ok(result);
     }
 
@@ -56,9 +58,16 @@ public class ReposController : ControllerBase
 
         var gitlog = await _gitService.Log(gitRepository);
 
-        var commits = await _parser.Parse(gitRepository, gitlog);
-        
-        await _gitCommitService.Create(commits);
+        var commits = await GitLogParser.Parse(gitRepository, gitlog);
+
+        try
+        {
+            await _gitCommitService.Create(commits);
+        }
+        catch (Exception)
+        {
+            Log.Error("error adding commits to the database");
+        }
 
         return Created($"/repos/${gitRepository.Id}", gitRepository);
     }
