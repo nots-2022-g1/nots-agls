@@ -22,6 +22,8 @@ public interface IDatasetService
 
     [Delete("/datasets/{id}")]
     Task<ApiResponse<Dataset>> Delete(int id);
-
     Task<string> GenerateTsvAsync(int id);
+
+    [Post("/datasets/autolabel")]
+    Task AutoLabel(AutoLabelConfig config);
 }

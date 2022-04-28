@@ -1,11 +1,13 @@
 @page "/datasets/{id:int}"
+@using frontend.ViewModels.Datasets
 
 <PageTitle>Edit Dataset #@id | AGLS</PageTitle>
 
-@inject DatasetService DatasetService
-@inject RepositoryService RepositoryService
-@inject KeywordService KeywordService
-@inject NavigationManager NavManager
+@inject DatasetService _datasetService
+@inject RepositoryService _repositoryService
+@inject KeywordService _keywordService
+@inject NavigationManager _navManager
+@inject IEditDatasetViewModel _viewModel
 
 
 <div class="row my-3">
@@ -35,63 +37,65 @@
 }
 else
 {
-    <div class="container form-container">
-        <div>
-            <label for="inputDatasetId" class="form-label">Id</label>
-            <input type="text" class="form-control" id="inputDatasetId" disabled @bind="dataset.Id">
-        </div>
-
-        <div>
-            <label for="inputDatasetName" class="form-label">Name</label>
-            <input type="text" class="form-control" id="inputDatasetName" @bind="dataset.Name">
-        </div>
-
-        <div class="d-flex justify-content-between">
-            <label class="form-label">Labeled Data</label>
-            <button @onclick="() => modal.Open()" type="button" class="btn btn-sm btn-success">
-                <span class="oi oi-list-rich me-1"></span>
-                Generate labeled data
-            </button>
-            <GeneratorModal @ref="modal"></GeneratorModal>
-        </div>
-
-        @if (errorMessage != null)
-        {
-            <div class="alert alert-danger p-2" role="alert">
-                <span class="oi oi-warning"></span> @errorMessage
+    <div class="row">
+        <div class="container form-container">
+            <div>
+                <label for="inputDatasetId" class="form-label">Id</label>
+                <input type="text" class="form-control" id="inputDatasetId" disabled @bind="dataset.Id">
             </div>
-        }
 
-        @if (successMessage != null)
-        {
-            <div class="alert alert-success p-2" role="alert">
-                <span class="oi oi-warning"></span> @successMessage
+            <div>
+                <label for="inputDatasetName" class="form-label">Name</label>
+                <input type="text" class="form-control" id="inputDatasetName" @bind="dataset.Name">
             </div>
-        }
 
-        <div class="d-grid mt-2">
-            <button type="button" class="btn btn-sm btn-primary" @onclick="handleEdit">
-                Save changes
-            </button>
+            <div class="d-flex justify-content-between">
+                <label class="form-label">Labeled Data</label>
+                <button @onclick="() => modal.Open()" type="button" class="btn btn-sm btn-success">
+                    <span class="oi oi-list-rich me-1"></span>
+                    Generate labeled data
+                </button>
+                <GeneratorModal Id="id" @ref="modal"></GeneratorModal>
+            </div>
+
+            @if (errorMessage != null)
+            {
+                <div class="alert alert-danger p-2" role="alert">
+                    <span class="oi oi-warning"></span> @errorMessage
+                </div>
+            }
+
+            @if (successMessage != null)
+            {
+                <div class="alert alert-success p-2" role="alert">
+                    <span class="oi oi-warning"></span> @successMessage
+                </div>
+            }
+
+            <div class="d-grid mt-2">
+                <button type="button" class="btn btn-sm btn-primary" @onclick="handleEdit">
+                    Save changes
+                </button>
+            </div>
         </div>
-        
+    </div>
+    <div class="row">
         <div class="table-responsive">
             <table class="table">
                 <thead>
                 <tr>
-                    <th>
-                        <span class="test-classs">id</span>
-                    </th>
-                    <th>string</th>
-                    <th>matched keyword</th>
-                    <th>useful</th>
-                    <th class="actions">
-                        actions
-                    </th>
+                    <th>Message</th>
+                    <th>IsUseful</th>
                 </tr>
                 </thead>
                 <tbody>
-
+                @foreach (var data in _viewModel.LabeledData)
+                {
+                    <tr>
+                        <td>@data.GitCommit.Message</td>
+                        <td>@data.IsUseful</td>
+                    </tr>
+                }
                 </tbody>
             </table>
         </div>
@@ -117,7 +121,7 @@ else
     {
         var datasetDto = new DatasetDto();
         datasetDto.Name = dataset?.Name;
-        var response = await DatasetService.Update(id, datasetDto);
+        var response = await _datasetService.Update(id, datasetDto);
 
         if (((int) response.StatusCode) == 200)
         {
@@ -133,8 +137,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        gitRepositories = await RepositoryService.Get();
-        keywordSets = await KeywordService.Get(); // TODO: Replace with KeywordSetService
-        dataset = await DatasetService.GetById(id);
+        await _viewModel.FetchLabeledData(id);
+        gitRepositories = await _repositoryService.Get();
+        keywordSets = await _keywordService.Get(); // TODO: Replace with KeywordSetService
+        dataset = await _datasetService.GetById(id);
     }
 }

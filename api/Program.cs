@@ -35,6 +35,7 @@ builder.Services.AddScoped<ILabeledDataService, LabeledDataService>();
 builder.Services.AddScoped<IKeywordService, KeywordService>();
 builder.Services.AddScoped<IGitService, GitService>();
 builder.Services.AddScoped<GitLogParser>();
+builder.Services.AddScoped<IMachineLearningService, MachineLearningService>();
 
 TypeAdapterConfig.GlobalSettings.Default.NameMatchingStrategy(NameMatchingStrategy.Flexible);
 

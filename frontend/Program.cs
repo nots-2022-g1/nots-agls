@@ -1,6 +1,7 @@
 using BlazorDownloadFile;
 using frontend.Services;
 using frontend.ViewModels.Commits;
+using frontend.ViewModels.Datasets;
 using frontend.ViewModels.Repositories;
 using frontend.ViewModels.KeywordSets;
 using Serilog;
@@ -32,6 +33,7 @@ builder.Services.AddTransient<IKeywordSetEditViewModel, KeywordSetEditViewModel>
 // -- Datasets
 builder.Services.AddHttpClient<IDatasetService, DatasetService>();
 builder.Services.AddSingleton<DatasetService>();
+builder.Services.AddTransient<IEditDatasetViewModel, EditDatasetViewModel>();
 // -- OpenAI
 builder.Services.AddHttpClient<IOpenAIService, OpenAIService>();
 builder.Services.AddSingleton<OpenAIService>();
@@ -46,6 +48,9 @@ builder.Services.AddScoped<IEditRepositoryViewModel, EditRepositoryViewModel>();
 builder.Services.AddHttpClient<ICommitService, CommitService>();
 builder.Services.AddSingleton<CommitService>();
 builder.Services.AddScoped<IListCommitsViewModel, ListCommitsViewModel>();
+// -- Machine Learning
+builder.Services.AddHttpClient<IMachineLearningService, MachineLearningService>();
+builder.Services.AddSingleton<MachineLearningService>();
 
 var app = builder.Build();
 
