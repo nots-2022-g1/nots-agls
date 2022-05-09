@@ -1,8 +1,11 @@
 @page "/openai"
+@using BlazorDownloadFile
+@using System.Text
 
-<PageTitle>OpenAI</PageTitle>
+<PageTitle>OpenAI Sandbox | AGLS</PageTitle>
 
 @inject OpenAIService OpenAIService
+@inject IBlazorDownloadFileService BlazorDownloadFileService;
 
 <div class="row my-3">
     <nav aria-label="breadcrumb" class="d-flex flex-row justify-content-between align-items-center">
@@ -49,13 +52,74 @@
             }
         </button>
 
-        <hr />
+        <hr/>
 
         @if (extractionResult != null)
         {
             <label class="fw-bold">Result</label>
             <p>@extractionResult</p>
         }
+    </div>
+</div>
+
+<div class="card mb-3">
+    <h5 class="card-header text-white bg-secondary">Commit Message Dataset</h5>
+    <div class="card-body">
+        <p>Upload a dataset which contains commit messages to execute instructions on them.</p>
+
+        @if (fileError != null)
+        {
+            <div class="alert alert-danger p-2" role="alert">
+                <span class="oi oi-warning"></span> @fileError
+            </div>
+        }
+
+        <div class="mb-3">
+            <label class="form-label" for="designExtractorFile">Upload file (.tsv)</label>
+            <InputFile type="file" class="form-control" id="designExtractorFile" accept=".tsv" OnChange="@handleLoadFile"/>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" for="designExtractorCommand">Enter instructions</label>
+            <input type="text" class="form-control" id="designExtractorCommand" @bind="designDecisionCommand"/>
+        </div>
+
+        <div class="mb-3 flex flex-row gap-2">
+            <button type="button" class="btn btn-primary" @onclick="handleGetReasonsFromTsv" disabled="@(fileName == null || loading)">
+                Extract reasons
+            </button>
+            <button type="button" class="btn btn-secondary" @onclick="downloadTsvAsync" disabled="@(commitResponses == null || commitResponses.Count < 1 || !shouldStopExtracting || loading)">
+                Export CSV
+            </button>
+            <button type="button" class="btn btn-danger" @onclick="handleStopExtracting" disabled="@(commitResponses == null || commitResponses.Count < 1 || shouldStopExtracting)">
+                Stop extracting
+            </button>
+        </div>
+
+        <hr/>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Ref</th>
+                <th>Commit</th>
+                <th>Response</th>
+            </tr>
+            </thead>
+            <tbody>
+            @if (commitResponses != null)
+            {
+                @for (int i = 0; i < commitResponses.Count; i++)
+                {
+                    <tr>
+                        <td>@i</td>
+                        <td>@commitResponses[i].commit</td>
+                        <td>@commitResponses[i].response</td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -80,7 +144,7 @@
             }
         </button>
 
-        <hr />
+        <hr/>
 
         @if (summarizationResult != null)
         {
@@ -102,9 +166,122 @@
     private bool summarizationInProgress { get; set; }
     private string? summarizationError { get; set; }
 
+    private bool loading { get; set; }
+    private string? fileName { get; set; }
+    private string? fileError { get; set; }
+    private string designDecisionCommand { get; set; } = "The following text describes a change, extract the reason for the change:";
+    private bool shouldStopExtracting { get; set; }
+    private List<string> tsvCommitMessages { get; set; }
+    private List<CommitResponse> commitResponses { get; set; }
+
+    private async Task handleLoadFile(InputFileChangeEventArgs e)
+    {
+        commitResponses = new List<CommitResponse>();
+        tsvCommitMessages = new List<string>();
+        fileError = null;
+        loading = true;
+        try
+        {
+            var ms = new MemoryStream();
+            await e.File.OpenReadStream(50000000L).CopyToAsync(ms);
+            fileName = e.File.Name;
+            var loopable = System.Text.Encoding.UTF8.GetString(ms.ToArray());
+
+            var items = loopable.Split(Environment.NewLine);
+            for (var i = 0; i < items.Length; i++)
+            {
+                if (i == 0) continue;
+                var columnIndex = 0;
+                var message = items[i].Split('\t');
+                if (columnIndex < message.Length)
+                {
+                    tsvCommitMessages.Add(message[columnIndex]);
+                }
+            }
+        }
+        catch
+        {
+            fileError = "Something went wrong while loading the file";
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private void handleStopExtracting()
+    {
+        shouldStopExtracting = true;
+    }
+
+    private async IAsyncEnumerable<CommitResponse> getSummarizationsAsync()
+    {
+        for (var i = 0; i < tsvCommitMessages.Count; i++)
+        {
+            if (shouldStopExtracting) break;
+            var cs = new CommitResponse();
+            cs.commit = tsvCommitMessages[i];
+            try
+            {
+                var dto = new OpenAIExtractDTO();
+                dto.prompt = $"{designDecisionCommand} {cs.commit}";
+                var response = await OpenAIService.extractReasons(dto);
+
+                if ((int) response.StatusCode == 200)
+                {
+                    cs.response = response.Content.choices[0].text;
+                }
+                else
+                {
+                    throw new Exception("Invalid response received");
+                }
+            }
+            catch
+            {
+                cs.response = "";
+            }
+            yield return cs;
+        }
+    }
+
+    private async Task handleGetReasonsFromTsv()
+    {
+        shouldStopExtracting = false;
+        commitResponses = new List<CommitResponse>();
+        fileError = null;
+        loading = true;
+        await foreach (var item in getSummarizationsAsync())
+        {
+            commitResponses.Add(item);
+            StateHasChanged();
+        }
+        loading = false;
+    }
+
+    public async Task downloadTsvAsync()
+    {
+        const char delimiter = '\t';
+
+        var columns = new List<string> {"Reference", "GitCommitMessage", "Response"};
+
+        var tsvFile = string.Join(delimiter, columns);
+
+        for (var i = 0; i < commitResponses.Count; i++)
+        {
+            var tsvRow = Environment.NewLine;
+            var cr = commitResponses[i];
+            tsvRow += $"{i}{delimiter}{cr.commit}{delimiter}{cr.response.Replace("\n", "")}";
+            tsvFile += tsvRow;
+        }
+
+        var date = DateTime.Now.ToString("dd-MM-yyyy");
+        await BlazorDownloadFileService.DownloadFileFromText($"export_openai_{date}.tsv", tsvFile, Encoding.ASCII, "text/tsv");
+    }
+
     private async void handleTextExtraction()
     {
-        if (gitCommitMessage == null || gitCommitMessage.Length < 1) {
+        if (gitCommitMessage == null || gitCommitMessage.Length < 1)
+        {
             extractionError = "Please paste a commit message.";
             return;
         }
@@ -113,11 +290,11 @@
         StateHasChanged();
 
         var dto = new OpenAIExtractDTO();
-        dto.prompt = gitCommitMessage;
+        dto.prompt = $"{designDecisionCommand} {gitCommitMessage}";
 
         var response = await OpenAIService.extractReasons(dto);
 
-        if (((int)response.StatusCode) == 200)
+        if (((int) response.StatusCode) == 200)
         {
             extractionResult = response.Content.choices[0].text;
             StateHasChanged();
@@ -134,7 +311,8 @@
 
     private async void handleTextSummarization()
     {
-        if(gitCommitMessage == null || gitCommitMessage.Length < 1) {
+        if (gitCommitMessage == null || gitCommitMessage.Length < 1)
+        {
             summarizationError = "Please paste a commit message.";
             return;
         }
@@ -147,7 +325,7 @@
 
         var response = await OpenAIService.summarizeText(dto);
 
-        if (((int)response.StatusCode) == 200)
+        if (((int) response.StatusCode) == 200)
         {
             summarizationResult = response.Content.choices[0].text;
             StateHasChanged();
