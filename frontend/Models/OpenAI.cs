@@ -23,7 +23,7 @@ public class OpenAIExtractDTO
 {
     private string _prompt;
 
-    public string prompt { get; set; } = "";
+    public string prompt { get; set; } = string.Empty;
     public double temperature { get; set; } = 0.7;
     public int max_tokens { get; set; } = 120;
     public double top_p { get; set; } = 1.0;
