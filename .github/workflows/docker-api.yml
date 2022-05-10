@@ -14,9 +14,11 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}-api
+  CONNECTIONSTRINGS__DEFAULT: ${{ secrets.CONNECTIONSTRINGS__DEFAULT }}
 
 jobs:
   build-and-push-image:
+    environment: portainer
     runs-on: ubuntu-latest
     permissions:
       contents: read
