@@ -1,5 +1,4 @@
-﻿using api.Datasets.Models;
-using api.Model;
+﻿using api.Models;
 using api.TrainingData;
 using Microsoft.ML;
 

@@ -1,4 +1,4 @@
-namespace api.Model;
+namespace api.Models;
 
 public class AutoLabelConfig
 {

@@ -1,4 +1,4 @@
-namespace api.Parser;
+namespace api.Models;
 
 public class GitLogCommit
 {

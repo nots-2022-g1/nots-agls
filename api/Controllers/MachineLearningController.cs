@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using api.Model;
+using api.Models;
 using api.Services;
 using Microsoft.AspNetCore.Mvc;
 

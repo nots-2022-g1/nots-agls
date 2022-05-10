@@ -1,7 +1,6 @@
-﻿using System.Runtime.Serialization;
-using api.TrainingData;
+﻿using api.TrainingData;
 
-namespace api.Model;
+namespace api.Models;
 
 public class LoadTrainingDataDto
 {

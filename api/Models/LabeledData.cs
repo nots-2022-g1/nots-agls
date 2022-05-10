@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace api.Model;
+namespace api.Models;
 
 public class LabeledData
 {

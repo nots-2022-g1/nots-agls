@@ -1,4 +1,4 @@
-using api.Model;
+using api.Models;
 
 namespace api.Services;
 

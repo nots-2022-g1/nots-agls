@@ -1,6 +1,6 @@
 ﻿using Microsoft.ML.Data;
 
-namespace api.Datasets.Models;
+namespace api.TrainingData;
 
 public class CommitClassification
 {

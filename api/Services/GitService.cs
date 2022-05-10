@@ -1,4 +1,4 @@
-using api.Model;
+using api.Models;
 using api.Parser;
 
 namespace api.Services;
