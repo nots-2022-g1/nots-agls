@@ -1,8 +1,8 @@
-using api.Model;
+using api.Models;
+using api.Parser;
 using api.Services;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -33,6 +33,8 @@ builder.Services.AddScoped<IGitCommitService, GitCommitService>();
 builder.Services.AddScoped(typeof(IGenericCrudService<>), typeof(GenericCrudService<>));
 builder.Services.AddScoped<ILabeledDataService, LabeledDataService>();
 builder.Services.AddScoped<IKeywordService, KeywordService>();
+builder.Services.AddScoped<IGitService, GitService>();
+builder.Services.AddScoped<GitLogParser>();
 builder.Services.AddScoped<IMachineLearningService, MachineLearningService>();
 
 TypeAdapterConfig.GlobalSettings.Default.NameMatchingStrategy(NameMatchingStrategy.Flexible);

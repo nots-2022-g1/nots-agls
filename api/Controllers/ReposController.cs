@@ -1,4 +1,5 @@
-using api.Model;
+using System.Collections.ObjectModel;
+using api.Models;
 using api.Parser;
 using api.Services;
 using Mapster;
@@ -20,14 +21,17 @@ public class RepoControllerAttribute : Attribute, IRouteTemplateProvider
 public class ReposController : ControllerBase
 {
     private readonly IGitRepoService _gitRepoService;
+    private readonly IGitService _gitService;
     private readonly IGitCommitService _gitCommitService;
     private readonly GitLogParser _parser;
 
-    public ReposController(IGitRepoService gitRepoService, IGitCommitService gitCommitService)
+    public ReposController(IGitRepoService gitRepoService, IGitCommitService gitCommitService, GitLogParser parser,
+        IGitService gitService)
     {
         _gitRepoService = gitRepoService;
         _gitCommitService = gitCommitService;
-        _parser = new GitLogParser();
+        _parser = parser;
+        _gitService = gitService;
     }
 
     [HttpGet]
@@ -44,6 +48,7 @@ public class ReposController : ControllerBase
         {
             return NotFound();
         }
+
         return Ok(result);
     }
 
@@ -52,11 +57,22 @@ public class ReposController : ControllerBase
     {
         var gitRepository = await _gitRepoService.Create(repo.Adapt<GitRepo>());
 
-        var parsedCommits = await _parser.Parse(new Uri(repo.Url));
-        var adaptedCommits = parsedCommits.Adapt<List<GitCommit>>();
-        adaptedCommits.ForEach(item => item.GitRepoId = gitRepository.Id);
-        
-        await _gitCommitService.Create(adaptedCommits);
+        var gitlog = await _gitService.Log(gitRepository);
+
+        var commits = new Collection<GitCommit>();
+        await foreach (var commit in GitLogParser.ParseGitCommitsAsync(gitlog, gitRepository))
+        {
+            commits.Add(commit);
+        }
+
+        try
+        {
+            await _gitCommitService.Create(commits);
+        }
+        catch (Exception)
+        {
+            Log.Error("error adding commits to the database");
+        }
 
         return Created($"/repos/${gitRepository.Id}", gitRepository);
     }

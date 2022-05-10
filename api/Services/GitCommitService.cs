@@ -1,5 +1,6 @@
-using api.Model;
+using api.Models;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace api.Services;
 
@@ -27,7 +28,15 @@ public class GitCommitService : IGitCommitService
     public async Task Create(IEnumerable<GitCommit> commits)
     {
         _gitCommits.AddRange(commits);
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            Log.Error( "one or more commits already exist");
+            throw;
+        }
     }
 
     public Task<GitCommit> Update(GitCommit commit)

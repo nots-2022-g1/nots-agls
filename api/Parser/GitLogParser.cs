@@ -1,96 +1,80 @@
-using System.Diagnostics;
 using System.Text.RegularExpressions;
+using api.Models;
 using Serilog;
 
 namespace api.Parser;
 
 public class GitLogParser
 {
+    private readonly IConfiguration _config;
     private readonly string _directory;
 
-    public GitLogParser()
+    public GitLogParser(IConfiguration config)
     {
-        _directory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        _config = config;
+        _directory = Path.Combine(Path.GetTempPath(), "gitlogparser");
     }
 
-    public async Task<List<Commit>> Parse(Uri location, bool punctuation = false)
+    private async Task<int> Count()
     {
+        using var gitCount = new GitProcess(_directory, "rev-list HEAD --count");
+        gitCount.Start();
+        await gitCount.WaitForExitAsync();
+        int count;
         try
         {
-            Directory.CreateDirectory(_directory);
-            var repoName = location.Segments.Last();
-
-            using var git = new Process();
-            git.StartInfo.UseShellExecute = false;
-            git.StartInfo.FileName = "git";
-            git.StartInfo.CreateNoWindow = true;
-            git.StartInfo.WorkingDirectory = _directory;
-
-            using var gitClone = git;
-            git.StartInfo.Arguments = $"clone {location.AbsoluteUri}";
-            gitClone.Start();
-            await gitClone.WaitForExitAsync();
-
-            using var gitLog = git;
-            gitLog.StartInfo.WorkingDirectory = Path.Combine(_directory, repoName);
-            git.StartInfo.Arguments = "log --date=iso";
-            git.StartInfo.RedirectStandardOutput = true;
-            gitLog.Start();
-            var gitlog = gitLog.WaitForExitAsync();
-            var commits = new List<Commit>();
-            Commit? commit = null;
-            while (!git.StandardOutput.EndOfStream)
-            {
-                var line = await git.StandardOutput.ReadLineAsync() ?? string.Empty;
-                if (line.Equals(string.Empty)) continue;
-                if (Regex.IsMatch(line, "^commit\\s[0-9a-f]{40}"))
-                {
-                    //now we know a new commit starts
-                    //read next lines until match again
-                    if (commit is not null)
-                    {
-                        commits.Add(commit);
-                        commit = new Commit {Hash = line.Split(' ').LastOrDefault()};
-                    }
-                    else
-                    {
-                        commit = new Commit {Hash = line.Split(' ').LastOrDefault()};
-                    }
-                }
-                else
-                {
-                    if (line.Contains("Author: "))
-                    {
-                        commit.Author = line.Split("Author: ", StringSplitOptions.RemoveEmptyEntries)
-                            .FirstOrDefault();
-                    }
-                    else if (line.Contains("Merge: "))
-                    {
-                        commit.IsMerge = true;
-                    }
-                    else if (line.Contains("Date: "))
-                    {
-                        commit.Date =
-                            DateTime.Parse(line.Split("Date: ", StringSplitOptions.RemoveEmptyEntries)
-                                .FirstOrDefault()).ToUniversalTime();
-                    }
-                    else
-                    {
-                        var message = line?.ToLower().TrimStart();
-                        if (punctuation == true) {
-                            message = message.StripPunctuation();
-                        }
-                        commit.Message += message;
-                    }
-                }
-            }
-            await gitlog;
-            return commits.Where(c => !c.IsMerge).ToList();
+            count = int.Parse((await gitCount.StandardOutput.ReadLineAsync())!);
         }
         catch (Exception e)
         {
-            Log.Error(e, "Error parsing repository, please inspect the logs for more information");
+            Log.Error(e, "Error parsing commit count");
             throw;
         }
+
+        return count;
+    }
+
+    /*
+     * This method takes a string containing the raw output of 'git log' and a GitRepo object.
+     * It parses the input string to GitCommit objects, and uses the GitRepo object to determine
+     * the GitCommit.GitRepoId property. It uses a queue<Task> and Task.WhenAll to enable the workload
+     * to be spread to multiple threads.
+     */
+
+    public static async IAsyncEnumerable<GitCommit> ParseGitCommitsAsync(string input, GitRepo repo)
+    {
+        var commitStart = new Regex("^commit\\s", RegexOptions.Multiline | RegexOptions.Compiled);
+        IEnumerable<string> commits = commitStart.Split(input);
+        
+        foreach (var commit in commits)
+        {
+            if (commit.Equals(string.Empty)) continue;
+            if (commit.Contains("Merge", StringComparison.CurrentCultureIgnoreCase)) continue;
+            var gitCommit = new GitCommit
+            {
+                Hash = await ParseHash(commit),
+                Message = await ParseMessage(commit),
+                GitRepoId = repo.Id
+            };
+            yield return gitCommit;
+        }
+    }
+
+    private static Task<string> ParseHash(string input)
+    {
+        return Task.Run(() =>
+        {
+            var splitBySpace = input.Split('\n');
+            return splitBySpace.First();
+        });
+    }
+
+    private static Task<string> ParseMessage(string input)
+    {
+        return Task.Run(() =>
+        {
+            var splitByDoubleNewline = input.Split("\n\n");
+            return splitByDoubleNewline[1].TrimStart();
+        });
     }
 }

@@ -1,5 +1,5 @@
+using api.Models;
 using Microsoft.AspNetCore.Mvc;
-using api.Model;
 using api.Services;
 using Mapster;
 

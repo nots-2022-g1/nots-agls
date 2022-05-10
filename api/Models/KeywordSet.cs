@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace api.Model;
+namespace api.Models;
 
-public class Dataset : IGenericCrudModel
+public class KeywordSet : IGenericCrudModel
 {
     [Key]
     public int Id { get; set; }
@@ -11,7 +11,7 @@ public class Dataset : IGenericCrudModel
     public DateTime LastModifiedAt { get; set; }
 }
 
-public class DataSetDto
+public class KeywordSetDto
 {
     public string Name { get; set; }
 }
