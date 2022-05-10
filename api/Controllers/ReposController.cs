@@ -1,4 +1,5 @@
-using api.Model;
+using System.Collections.ObjectModel;
+using api.Models;
 using api.Parser;
 using api.Services;
 using Mapster;
@@ -58,7 +59,11 @@ public class ReposController : ControllerBase
 
         var gitlog = await _gitService.Log(gitRepository);
 
-        var commits = await GitLogParser.Parse(gitRepository, gitlog);
+        var commits = new Collection<GitCommit>();
+        await foreach (var commit in GitLogParser.ParseGitCommitsAsync(gitlog, gitRepository))
+        {
+            commits.Add(commit);
+        }
 
         try
         {

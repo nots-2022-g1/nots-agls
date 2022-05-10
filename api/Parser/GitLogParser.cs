@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using api.Model;
+using api.Models;
 using Serilog;
 
 namespace api.Parser;
@@ -40,37 +40,41 @@ public class GitLogParser
      * the GitCommit.GitRepoId property. It uses a queue<Task> and Task.WhenAll to enable the workload
      * to be spread to multiple threads.
      */
-    public static Task<IEnumerable<GitCommit>> Parse(GitRepo repo, string input)
+
+    public static async IAsyncEnumerable<GitCommit> ParseGitCommitsAsync(string input, GitRepo repo)
     {
         var commitStart = new Regex("^commit\\s", RegexOptions.Multiline | RegexOptions.Compiled);
         IEnumerable<string> commits = commitStart.Split(input);
-
-        ICollection<GitCommit> gitCommits = commits
-            .Where(c => !c.Equals(string.Empty))
-            .Where(c => !c.Contains("Merge", StringComparison.CurrentCultureIgnoreCase))
-            .Select(commit => new GitCommit
+        
+        foreach (var commit in commits)
+        {
+            if (commit.Equals(string.Empty)) continue;
+            if (commit.Contains("Merge", StringComparison.CurrentCultureIgnoreCase)) continue;
+            var gitCommit = new GitCommit
             {
-                Hash = ParseHash(commit),
-                Message = ParseMessage(commit),
+                Hash = await ParseHash(commit),
+                Message = await ParseMessage(commit),
                 GitRepoId = repo.Id
-            }).ToList();
-
-        return Task.FromResult<IEnumerable<GitCommit>>(gitCommits);
+            };
+            yield return gitCommit;
+        }
     }
 
-    private static string ParseHash(string input)
+    private static Task<string> ParseHash(string input)
     {
-        var splitBySpace = input.Split('\n');
-        return splitBySpace.First();
-        // var commitHash = new Regex("^commit ([0-9a-f]{40})", RegexOptions.Compiled | RegexOptions.Multiline);
-        // return commitHash.Match(input).Groups[1].Value;
+        return Task.Run(() =>
+        {
+            var splitBySpace = input.Split('\n');
+            return splitBySpace.First();
+        });
     }
 
-    private static string ParseMessage(string input)
+    private static Task<string> ParseMessage(string input)
     {
-        var splitByDoubleNewline = input.Split("\n\n");
-        // var messageRegex = new Regex("\n{2}", RegexOptions.Compiled | RegexOptions.Multiline);
-        // return messageRegex.Split(input)[1];
-        return splitByDoubleNewline[1].TrimStart();
+        return Task.Run(() =>
+        {
+            var splitByDoubleNewline = input.Split("\n\n");
+            return splitByDoubleNewline[1].TrimStart();
+        });
     }
 }
