@@ -33,10 +33,6 @@ namespace api.Models
 
             modelBuilder.Entity<LabeledData>(e =>
             {
-                e.HasOne(labeledData => labeledData.GitCommit)
-                    .WithMany()
-                    .HasForeignKey(labeledData => labeledData.GitCommitHash)
-                    .OnDelete(DeleteBehavior.NoAction);
                 e.HasOne(labeledData => labeledData.Dataset)
                     .WithMany()
                     .HasForeignKey(labeledData => labeledData.DatasetId)

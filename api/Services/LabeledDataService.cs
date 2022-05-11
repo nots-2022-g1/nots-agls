@@ -20,8 +20,7 @@ public class LabeledDataService : ILabeledDataService
     }
     public async Task<IList<LabeledData>> Get(int dataSetId)
     {
-        return await _dataRepository.Where(e => e.DatasetId.Equals(dataSetId))
-            .Include(e => e.GitCommit).ToListAsync();
+        return await _dataRepository.Where(e => e.DatasetId.Equals(dataSetId)).ToListAsync();
     }
 
     public async Task<LabeledData> Create(LabeledData data)
