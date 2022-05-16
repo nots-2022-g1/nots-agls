@@ -169,7 +169,7 @@
     private bool loading { get; set; }
     private string? fileName { get; set; }
     private string? fileError { get; set; }
-    private string designDecisionCommand { get; set; } = "The following text describes a change, extract the reason for the change:";
+    private string designDecisionCommand { get; set; } = "Yes or no. Does the text contain a reason for a change?";
     private bool shouldStopExtracting { get; set; }
     private List<string> tsvCommitMessages { get; set; }
     private List<CommitResponse> commitResponses { get; set; }
@@ -201,14 +201,17 @@
                 if (!isMultiline)
                 {
                     isMultiline = line.StartsWith('"');
-                    line = line.Remove(0, 1);
+                    if (isMultiline)
+                    {
+                        line = line.Remove(0, 1);
+                    }
                 }
 
-                content += $"{line.Split('\t')[0]} ";
+                content += $"{line.Split('\t')[0]}\n";
 
                 if (isMultiline)
                 {
-                    var isEndMultiline = line.EndsWith("\"\r");
+                    var isEndMultiline = line.EndsWith("\"");
                     if (!isEndMultiline && i != lines.Length) continue;
 
                     if (isEndMultiline)
@@ -227,8 +230,9 @@
                 }
             }
         }
-        catch
+        catch (Exception ex)
         {
+            Console.WriteLine(ex.Message);
             fileError = "Something went wrong while loading the file";
         }
         finally
@@ -252,17 +256,11 @@
             try
             {
                 var dto = new OpenAIExtractDTO();
-                dto.prompt = $"{designDecisionCommand} {cs.commit}";
+                dto.prompt = $"{designDecisionCommand}\n\n\"{cs.commit}\"\n";
                 var response = await OpenAIService.extractReasons(dto);
-
-                if ((int) response.StatusCode == 200)
-                {
-                    cs.response = response.Content.choices[0].text;
-                }
-                else
-                {
-                    throw new Exception("Invalid response received");
-                }
+                
+                cs.response = response.Content.choices[0].text;
+                
             }
             catch
             {
@@ -288,7 +286,7 @@
 
     public async Task downloadTsvAsync()
     {
-        const char delimiter = '\t';
+        const char delimiter = ',';
 
         var columns = new List<string> {"Reference", "GitCommitMessage", "Response"};
 
@@ -298,12 +296,12 @@
         {
             var tsvRow = Environment.NewLine;
             var cr = commitResponses[i];
-            tsvRow += $"{i}{delimiter}{cr.commit}{delimiter}{cr.response.Replace("\n", "")}";
+            tsvRow += $"{i}{delimiter}\"{cr.commit}\"{delimiter}{cr.response.Replace("\n", "")}";
             tsvFile += tsvRow;
         }
 
         var date = DateTime.Now.ToString("dd-MM-yyyy");
-        await BlazorDownloadFileService.DownloadFileFromText($"export_openai_{date}.tsv", tsvFile, Encoding.ASCII, "text/tsv");
+        await BlazorDownloadFileService.DownloadFileFromText($"export_openai_{date}.csv", tsvFile, Encoding.ASCII, "text/csv");
     }
 
     private async void handleTextExtraction()
