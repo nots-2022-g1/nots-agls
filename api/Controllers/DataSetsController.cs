@@ -57,20 +57,14 @@ public class DataSetsController : GenericCrudController<Dataset, DataSetDto>
     {
         var commits = await _gitCommitService.Get(config.GitRepoId);
         var keywords = await _keywordService.GetByKeywordSetId(config.KeywordSetId);
-        var concurrentBag = new ConcurrentBag<LabeledData>();
+        var autoLabeledData = new ConcurrentBag<LabeledData>();
 
-        Parallel.ForEach(commits, commit => { concurrentBag.Add(LabelCommit(commit, keywords, config)); });
-
-        ICollection<LabeledData> labeledData = concurrentBag.ToArray();
-        
-        if (config.BalanceOutput)
+        Parallel.ForEach(commits, commit =>
         {
-            var usefuls = labeledData.Where(e => e.IsUseful.Equals(true));
-            var notUsefuls = labeledData.Where(e => e.IsUseful.Equals(false));
-            var labeledDatas = usefuls as LabeledData[] ?? usefuls.ToArray();
-            labeledData = labeledDatas.Concat(notUsefuls.Take(labeledDatas.Length)).ToList();
-        }
-        await _labeledDataService.Add(labeledData);
+            autoLabeledData.Add(LabelCommit(commit, keywords, config));
+        });
+
+        await _labeledDataService.Add(autoLabeledData);
         return Ok();
     }
 
@@ -79,7 +73,7 @@ public class DataSetsController : GenericCrudController<Dataset, DataSetDto>
         var tokens = commit.Message.Split(' ');
         var labeledData = new LabeledData
         {
-            Message = commit.Message,
+            GitCommitHash = commit.Hash,
             DatasetId = config.DatasetId,
             IsUseful = false
         };
