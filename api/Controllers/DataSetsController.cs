@@ -73,7 +73,7 @@ public class DataSetsController : GenericCrudController<Dataset, DataSetDto>
         var tokens = commit.Message.Split(' ');
         var labeledData = new LabeledData
         {
-            GitCommitHash = commit.Hash,
+            Message = commit.Message,
             DatasetId = config.DatasetId,
             IsUseful = false
         };
