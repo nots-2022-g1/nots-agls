@@ -211,7 +211,11 @@
                     var isEndMultiline = line.EndsWith("\"\r");
                     if (!isEndMultiline && i != lines.Length) continue;
 
-                    content = content.Remove(content.Length - 3);
+                    if (isEndMultiline)
+                    {
+                        content = content.Remove(content.Length - 2);
+                    }
+                    
                     tsvCommitMessages.Add(content);
                     isMultiline = false;
                     content = "";
