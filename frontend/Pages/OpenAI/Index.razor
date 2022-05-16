@@ -109,7 +109,7 @@
             <tbody>
             @if (commitResponses != null)
             {
-                @for (int i = 0; i < commitResponses.Count; i++)
+                @for (var i = 0; i < commitResponses.Count; i++)
                 {
                     <tr>
                         <td>@i</td>
@@ -187,15 +187,43 @@
             fileName = e.File.Name;
             var loopable = System.Text.Encoding.UTF8.GetString(ms.ToArray());
 
-            var items = loopable.Split(Environment.NewLine);
-            for (var i = 0; i < items.Length; i++)
+            var lines = loopable.Split(Environment.NewLine);
+
+            var content = "";
+            var isMultiline = false;
+
+            for (var i = 0; i < lines.Length; i++)
             {
                 if (i == 0) continue;
-                var columnIndex = 0;
-                var message = items[i].Split('\t');
-                if (columnIndex < message.Length)
+
+                var line = lines[i];
+
+                if (!isMultiline)
                 {
-                    tsvCommitMessages.Add(message[columnIndex]);
+                    isMultiline = line.StartsWith('"');
+                    line = line.Remove(0, 1);
+                }
+
+                content += $"{line.Split('\t')[0]} ";
+
+                if (isMultiline)
+                {
+                    var isEndMultiline = line.EndsWith("\"\r");
+                    if (!isEndMultiline && i != lines.Length) continue;
+
+                    if (isEndMultiline)
+                    {
+                        content = content.Remove(content.Length - 2);
+                    }
+                    
+                    tsvCommitMessages.Add(content);
+                    isMultiline = false;
+                    content = "";
+                }
+                else
+                {
+                    tsvCommitMessages.Add(content);
+                    content = "";
                 }
             }
         }
@@ -216,11 +244,11 @@
 
     private async IAsyncEnumerable<CommitResponse> getSummarizationsAsync()
     {
-        for (var i = 0; i < tsvCommitMessages.Count; i++)
+        foreach (var commitMessage in tsvCommitMessages)
         {
             if (shouldStopExtracting) break;
             var cs = new CommitResponse();
-            cs.commit = tsvCommitMessages[i];
+            cs.commit = commitMessage;
             try
             {
                 var dto = new OpenAIExtractDTO();
