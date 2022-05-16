@@ -58,7 +58,7 @@ public class DataSetsController : GenericCrudController<Dataset, DataSetDto>
         var commits = await _gitCommitService.Get(config.GitRepoId);
         var keywords = await _keywordService.GetByKeywordSetId(config.KeywordSetId);
         var autoLabeledData = new ConcurrentBag<LabeledData>();
-        
+
         Parallel.ForEach(commits, commit =>
         {
             autoLabeledData.Add(LabelCommit(commit, keywords, config));
@@ -67,24 +67,29 @@ public class DataSetsController : GenericCrudController<Dataset, DataSetDto>
         await _labeledDataService.Add(autoLabeledData);
         return Ok();
     }
-    
+
     private static LabeledData LabelCommit(GitCommit commit, ICollection<Keyword> keywords, AutoLabelConfig config)
     {
         var tokens = commit.Message.Split(' ');
         var labeledData = new LabeledData
         {
-            GitCommitHash = commit.Hash,
+            Message = commit.Message,
             DatasetId = config.DatasetId,
             IsUseful = false
         };
-            
+
         foreach (var token in tokens)
         {
             foreach (var keyword in keywords)
             {
-                if(!keyword.Name.Equals(token, StringComparison.InvariantCultureIgnoreCase)) continue;
+                if (!keyword.Name.Equals(token, StringComparison.InvariantCultureIgnoreCase)) continue;
                 labeledData.IsUseful = true;
                 labeledData.MatchedOnKeyword = keyword.Name;
+                if (config.ExcludeKeyword)
+                {
+                    labeledData.Message = string.Join(' ', tokens.Where(t => !t.Equals(token)));
+                }
+                break;
             }
         }
 
