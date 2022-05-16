@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.Net;
 using api.Models;
 using api.Services;
@@ -55,27 +57,37 @@ public class DataSetsController : GenericCrudController<Dataset, DataSetDto>
     {
         var commits = await _gitCommitService.Get(config.GitRepoId);
         var keywords = await _keywordService.GetByKeywordSetId(config.KeywordSetId);
-        var autoLabeledData = new List<LabeledData>();
-
-        foreach (var commit in commits)
+        var autoLabeledData = new ConcurrentBag<LabeledData>();
+        
+        Parallel.ForEach(commits, commit =>
         {
-            var labeledData = new LabeledData
-            {
-                GitCommitHash = commit.Hash,
-                DatasetId = config.DatasetId,
-                IsUseful = false
-            };
-            foreach (var keyword in keywords)
-            {
-                if (!commit.Message.Contains(keyword.Name)) continue;
-                labeledData.IsUseful = true;
-                labeledData.MatchedOnKeyword = keyword.Name;
-            }
-
-            autoLabeledData.Add(labeledData);
-        }
+            autoLabeledData.Add(LabelCommit(commit, keywords, config));
+        });
 
         await _labeledDataService.Add(autoLabeledData);
         return Ok();
+    }
+    
+    private static LabeledData LabelCommit(GitCommit commit, ICollection<Keyword> keywords, AutoLabelConfig config)
+    {
+        var tokens = commit.Message.Split(' ');
+        var labeledData = new LabeledData
+        {
+            GitCommitHash = commit.Hash,
+            DatasetId = config.DatasetId,
+            IsUseful = false
+        };
+            
+        foreach (var token in tokens)
+        {
+            foreach (var keyword in keywords)
+            {
+                if(!keyword.Name.Equals(token, StringComparison.InvariantCultureIgnoreCase)) continue;
+                labeledData.IsUseful = true;
+                labeledData.MatchedOnKeyword = keyword.Name;
+            }
+        }
+
+        return labeledData;
     }
 }
