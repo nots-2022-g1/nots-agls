@@ -1,4 +1,5 @@
 ﻿using frontend.Models;
+using frontend.Utils;
 using Refit;
 
 namespace frontend.Services;
@@ -16,5 +17,10 @@ public class CommitService : ICommitService
     public async Task<List<GitCommit>> GetByRepoId(int repoId)
     {
         return await _client.GetByRepoId(repoId);
+    }
+
+    public async Task<PaginatedList<GitCommit>> GetByRepoIdPaginated(int repoId, int pageId)
+    {
+        return await _client.GetByRepoIdPaginated(repoId, pageId);
     }
 }

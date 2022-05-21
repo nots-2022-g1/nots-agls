@@ -1,4 +1,5 @@
 using api.Models;
+using api.Utils;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -18,6 +19,13 @@ public class GitCommitService : IGitCommitService
     public async Task<IList<GitCommit>> Get(int repoId)
     {
         return await _gitCommits.Where(e => e.GitRepoId.Equals(repoId)).ToListAsync();
+    }
+
+    public async Task<PaginatedList<GitCommit>> GetPaginated(int pageIndex, int pageSize)
+    {
+        var query = _gitCommits.AsQueryable();
+        var paginatedList = await PaginatedList<GitCommit>.CreateAsync(query, pageIndex, pageSize);
+        return paginatedList;
     }
 
     public Task<GitCommit> Create(GitCommit commit)

@@ -1,12 +1,13 @@
 ﻿using frontend.Models;
 using frontend.Services;
+using frontend.Utils;
 
 namespace frontend.ViewModels.Commits;
 
 public interface IListCommitsViewModel
 {
-    public List<GitCommit> Commits { get; }
-    public Task FetchCommitsForRepoAsync(int repoId);
+    public PaginatedList<GitCommit> Commits { get; }
+    public Task FetchCommitsForRepoAsync(int repoId, int pageId);
 }
 
 public class ListCommitsViewModel : IListCommitsViewModel
@@ -18,10 +19,10 @@ public class ListCommitsViewModel : IListCommitsViewModel
         _commitService = commitService;
     }
 
-    public List<GitCommit> Commits { get; private set; } = new();
+    public PaginatedList<GitCommit> Commits { get; private set; } = new();
 
-    public async Task FetchCommitsForRepoAsync(int repoId)
+    public async Task FetchCommitsForRepoAsync(int repoId, int pageId)
     {
-        Commits = await _commitService.GetByRepoId(repoId);
+        Commits = await _commitService.GetByRepoIdPaginated(repoId, pageId);
     }
 }

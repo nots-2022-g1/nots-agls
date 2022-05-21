@@ -1,5 +1,6 @@
 using api.Models;
 using api.Services;
+using api.Utils;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,14 @@ public class CommitsController : ControllerBase
     {
         var results = await _gitCommitService.Get(repoId);
         return Ok(results.Adapt<IList<GitCommitResponseDto>>());
+    }
+
+    [HttpGet("page/{pageId:int}")]
+    public async Task<IActionResult> GetPage(int repoId, int pageId)
+    {
+        const int pageSize = 50;
+        var results = await _gitCommitService.GetPaginated(pageId, pageSize);
+        return Ok(results);
     }
 
     [HttpPost]

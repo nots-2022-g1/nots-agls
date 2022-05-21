@@ -1,4 +1,4 @@
-@page "/repositories/{Id:int}"
+@page "/repositories/{Id:int}/page/{PageId:int}"
 
 <PageTitle>View Repository #@Id | AGLS</PageTitle>
 
@@ -33,13 +33,14 @@
             @_viewModel.Repository.Url
         </a>
     </div>
+    
+    <p>page @_commitsViewModel.Commits.PageIndex / @_commitsViewModel.Commits.TotalPages</p>
 
     <div class="table-responsive">
-        <table class="table">
+        <table class="table overflow-hidden">
             <thead>
             <tr>
                 <th>hash</th>
-                <th style="min-width: 20ch">date / time</th>
                 <th>Message</th>
             </tr>
             </thead>
@@ -48,7 +49,6 @@
             {
                 <tr>
                     <td>@commit.Hash</td>
-                    <td>@commit.Date</td>
                     <td>@commit.Message</td>
                 </tr>
             }
@@ -62,10 +62,13 @@
     [Parameter]
     public int Id { get; set; }
 
+    [Parameter]
+    public int PageId { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         await _viewModel.LoadRepositoryAsync(Id);
-        await _commitsViewModel.FetchCommitsForRepoAsync(Id);
+        await _commitsViewModel.FetchCommitsForRepoAsync(Id, PageId);
     }
 
 }
