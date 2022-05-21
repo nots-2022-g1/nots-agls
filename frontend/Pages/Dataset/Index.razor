@@ -54,7 +54,7 @@
                         <td>@dataset.CreatedDate</td>
                         <td>@dataset.UpdatedDate</td>
                         <td class="actions">
-                            <button class="btn btn-primary btn-sm" @onclick="() => handleExport(dataset.Id)">
+                            <button class="btn btn-primary btn-sm" @onclick="() => HandleExport(dataset.Id)">
                                     <span class="oi oi-document"></span>
                             </button>
                             <a href="/datasets/@dataset.Id">
@@ -89,11 +89,11 @@
         }
     }
 
-    private async void handleExport(int id)
+    private async void HandleExport(int id)
     {
-        var tsv = await DatasetService.GenerateTsvAsync(id);
+        var csv = await DatasetService.GenerateTsvAsync(id);
         var date = DateTime.Now.ToString("dd-MM-yyyy");
-        await BlazorDownloadFileService.DownloadFileFromText($"export_dataset{id}_{date}.tsv", tsv, Encoding.ASCII, "text/tsv");
+        await BlazorDownloadFileService.DownloadFileFromText($"export_dataset{id}_{date}.csv", csv, Encoding.ASCII, "text/csv");
     }
 
     protected override async Task OnInitializedAsync()

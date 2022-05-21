@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.Text;
+using CsvHelper;
 using Refit;
 using frontend.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -50,21 +52,13 @@ public class DatasetService : IDatasetService
 
     public async Task<string> GenerateTsvAsync(int id)
     {
-        const char delimiter = '\t';
-        var response = await _client.GetLabeledData(id);
+        var labeledData = await _client.GetLabeledData(id);
 
-        var columns = new List<string> {"GitCommitMessage", "IsUseful", "MatchedOnKeyword"};
+        await using TextWriter writer = new StringWriter();
+        await using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+        await csv.WriteRecordsAsync(labeledData);
 
-        var csvFile = string.Join(delimiter, columns);
-
-        foreach (var labeledData in response)
-        {
-            var csvRow = Environment.NewLine;
-            csvRow += $"{labeledData.Message}{delimiter}{labeledData.IsUseful}{delimiter}{labeledData.MatchedOnKeyword}";
-            csvFile += csvRow;
-        }
-
-        return csvFile;
+        return writer.ToString() ?? throw new InvalidOperationException();
     }
 
     public Task AutoLabel(AutoLabelConfig config)
