@@ -13,8 +13,11 @@ Log.Information("Starting up");
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((ctx, lc) => lc
-    .WriteTo.Console());
+builder.Host.UseSerilog((ctx, lc) =>
+    lc
+        .WriteTo.Console()
+        .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", Serilog.Events.LogEventLevel.Warning)
+);
 
 // Add services to the container.
 
