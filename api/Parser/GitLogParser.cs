@@ -62,19 +62,11 @@ public class GitLogParser
 
     private static Task<string> ParseHash(string input)
     {
-        return Task.Run(() =>
-        {
-            var splitBySpace = input.Split('\n');
-            return splitBySpace.First();
-        });
+        return Task.Run(() => input.Split('\n').First());
     }
 
     private static Task<string> ParseMessage(string input)
     {
-        return Task.Run(() =>
-        {
-            var splitByDoubleNewline = input.Split("\n\n");
-            return splitByDoubleNewline[1].TrimStart();
-        });
+        return Task.Run(() => input.Split("\n\n")[1].TrimStart());
     }
 }
