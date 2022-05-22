@@ -47,12 +47,24 @@
     </div>
 </div>
 
+<EditForm Model="@_viewModel.RepositoriesCsv" OnValidSubmit="@HandleValidSubmit">
+    <InputTextArea @bind-Value="@_viewModel.RepositoriesCsv.csvData"></InputTextArea>
+    <button type="submit">Submit</button>
+</EditForm>
+
 @code {
     private bool IsLoading { get; set; }
     private async Task Create()
     {
         IsLoading = true;
         await _viewModel.CreateRepositoryAsync();
+        _navigation.NavigateTo("/repositories");
+    }
+    
+    private async Task HandleValidSubmit()
+    {
+        IsLoading = true;
+        await _viewModel.CreateRepositoriesAsync();
         _navigation.NavigateTo("/repositories");
     }
 

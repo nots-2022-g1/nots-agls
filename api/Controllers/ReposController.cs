@@ -52,15 +52,12 @@ public class ReposController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Post(GitRepoCreateDto repo)
+    private async Task LogAndParseRepo(GitRepo repo)
     {
-        var gitRepository = await _gitRepoService.Create(repo.Adapt<GitRepo>());
-
-        var gitlog = await _gitService.Log(gitRepository);
+        var gitlog = await _gitService.Log(repo);
 
         var commits = new Collection<GitCommit>();
-        await foreach (var commit in GitLogParser.ParseGitCommitsAsync(gitlog, gitRepository))
+        await foreach (var commit in GitLogParser.ParseGitCommitsAsync(gitlog, repo))
         {
             commits.Add(commit);
         }
@@ -73,8 +70,28 @@ public class ReposController : ControllerBase
         {
             Log.Error("error adding commits to the database");
         }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post(GitRepoCreateDto repo)
+    {
+        var gitRepository = await _gitRepoService.Create(repo.Adapt<GitRepo>());
+
+        await LogAndParseRepo(gitRepository);
 
         return Created($"/repos/${gitRepository.Id}", gitRepository);
+    }
+    
+    [HttpPost("multi")]
+    public async Task<IActionResult> PostMulti(ICollection<GitRepoCreateDto> repos)
+    {
+        foreach (var repo in repos)
+        {
+            var gitRepository = await _gitRepoService.Create(repo.Adapt<GitRepo>());
+            await LogAndParseRepo(gitRepository);
+        }
+
+        return StatusCode(StatusCodes.Status201Created);
     }
 
     [HttpPut("{id:int}")]

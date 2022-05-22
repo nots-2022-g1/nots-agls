@@ -12,7 +12,10 @@ public interface IRepositoryService
     Task<Repository> GetById(int id);
 
     [Post("/repos")]
-    Task Create(Repository repository);
+    Task Create(GitRepoCreateDto repository);
+    
+    [Post("/repos/multi")]
+    Task Create(ICollection<GitRepoCreateDto> repository);
 
     [Put("/repos/{id}")]
     Task Update(int id, Repository repository);

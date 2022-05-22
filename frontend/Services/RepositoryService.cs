@@ -23,9 +23,14 @@ public class RepositoryService : IRepositoryService
         return await _client.GetById(id);
     }
 
-    public async Task Create(Repository repository)
+    public async Task Create(GitRepoCreateDto repository)
     {
         await _client.Create(repository);
+    }
+    
+    public async Task Create(ICollection<GitRepoCreateDto> repositories)
+    {
+        await _client.Create(repositories);
     }
 
     public async Task Update(int id, Repository repository)
