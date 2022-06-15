@@ -1,6 +1,8 @@
 @page "/openai"
 @using BlazorDownloadFile
 @using System.Text
+@using CsvHelper
+@using System.Globalization
 
 <PageTitle>OpenAI Sandbox | AGLS</PageTitle>
 
@@ -91,7 +93,7 @@
             <button type="button" class="btn btn-secondary" @onclick="downloadTsvAsync" disabled="@(commitResponses == null || commitResponses.Count < 1 || !shouldStopExtracting || loading)">
                 Export CSV
             </button>
-            <button type="button" class="btn btn-danger" @onclick="handleStopExtracting" disabled="@(commitResponses == null || commitResponses.Count < 1 || shouldStopExtracting)">
+            <button type="button" class="btn btn-danger" @onclick="HandleStopExtracting" disabled="@(commitResponses == null || commitResponses.Count < 1 || shouldStopExtracting)">
                 Stop extracting
             </button>
         </div>
@@ -171,13 +173,12 @@
     private string? fileError { get; set; }
     private string designDecisionCommand { get; set; } = "The following text describes a change, extract the reason for the change:";
     private bool shouldStopExtracting { get; set; }
-    private List<string> tsvCommitMessages { get; set; }
+    private IEnumerable<LabeledData> parsedLabeledData { get; set; }
     private List<CommitResponse> commitResponses { get; set; }
 
     private async Task handleLoadFile(InputFileChangeEventArgs e)
     {
         commitResponses = new List<CommitResponse>();
-        tsvCommitMessages = new List<string>();
         fileError = null;
         loading = true;
         try
@@ -187,45 +188,9 @@
             fileName = e.File.Name;
             var loopable = System.Text.Encoding.UTF8.GetString(ms.ToArray());
 
-            var lines = loopable.Split(Environment.NewLine);
-
-            var content = "";
-            var isMultiline = false;
-
-            for (var i = 0; i < lines.Length; i++)
-            {
-                if (i == 0) continue;
-
-                var line = lines[i];
-
-                if (!isMultiline)
-                {
-                    isMultiline = line.StartsWith('"');
-                    line = line.Remove(0, 1);
-                }
-
-                content += $"{line.Split('\t')[0]} ";
-
-                if (isMultiline)
-                {
-                    var isEndMultiline = line.EndsWith("\"\r");
-                    if (!isEndMultiline && i != lines.Length) continue;
-
-                    if (isEndMultiline)
-                    {
-                        content = content.Remove(content.Length - 2);
-                    }
-                    
-                    tsvCommitMessages.Add(content);
-                    isMultiline = false;
-                    content = "";
-                }
-                else
-                {
-                    tsvCommitMessages.Add(content);
-                    content = "";
-                }
-            }
+            using TextReader reader = new StringReader(loopable);
+            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            parsedLabeledData = csv.GetRecords<LabeledData>();
         }
         catch
         {
@@ -237,18 +202,18 @@
         }
     }
 
-    private void handleStopExtracting()
+    private void HandleStopExtracting()
     {
         shouldStopExtracting = true;
     }
 
-    private async IAsyncEnumerable<CommitResponse> getSummarizationsAsync()
+    private async IAsyncEnumerable<CommitResponse> GetSummarizationsAsync()
     {
-        foreach (var commitMessage in tsvCommitMessages)
+        foreach (var commitMessage in parsedLabeledData)
         {
             if (shouldStopExtracting) break;
             var cs = new CommitResponse();
-            cs.commit = commitMessage;
+            cs.commit = commitMessage.Message;
             try
             {
                 var dto = new OpenAIExtractDTO();
@@ -278,7 +243,7 @@
         commitResponses = new List<CommitResponse>();
         fileError = null;
         loading = true;
-        await foreach (var item in getSummarizationsAsync())
+        await foreach (var item in GetSummarizationsAsync())
         {
             commitResponses.Add(item);
             StateHasChanged();
