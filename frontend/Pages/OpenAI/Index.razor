@@ -77,8 +77,8 @@
         }
 
         <div class="mb-3">
-            <label class="form-label" for="designExtractorFile">Upload file (.tsv)</label>
-            <InputFile type="file" class="form-control" id="designExtractorFile" accept=".tsv" OnChange="@handleLoadFile"/>
+            <label class="form-label" for="designExtractorFile">Upload file (.csv)</label>
+            <InputFile type="file" class="form-control" id="designExtractorFile" accept=".csv" OnChange="@handleLoadFile"/>
         </div>
 
         <div class="mb-3">
@@ -190,7 +190,7 @@
 
             using TextReader reader = new StringReader(loopable);
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-            parsedLabeledData = csv.GetRecords<LabeledData>();
+            parsedLabeledData = csv.GetRecords<LabeledData>().ToList();
         }
         catch
         {
@@ -268,7 +268,7 @@
         }
 
         var date = DateTime.Now.ToString("dd-MM-yyyy");
-        await BlazorDownloadFileService.DownloadFileFromText($"export_openai_{date}.tsv", tsvFile, Encoding.ASCII, "text/tsv");
+        await BlazorDownloadFileService.DownloadFileFromText($"export_openai_{date}.csv", tsvFile, Encoding.ASCII, "text/csv");
     }
 
     private async void handleTextExtraction()
